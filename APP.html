@@ -146,11 +146,11 @@
             //data filter
             // save state of visual variables to brush and filter
             let svgMap,svgBars;
-
+            let barState=0; //0-> total, 1-> dados por ano
             let barsRect, barScales;
             let scatterCircles, scatterScales,scatterLine,scatterText;
             let raw_geo_data;
-           
+            let filteredState;
             d3.csv("test.csv")
                 .then((data) => {
                     let newData = data.map( d => {
@@ -166,23 +166,38 @@
 
             
             function getSingleStateData(key){
-                let filteredState= rawData.filter(d=> d.Estado===key);
+                filteredState= rawData.filter(d=> d.Estado===key);
                 // console.table(filteredState)   
-                updateBars(svgBars, barScales, filteredState)
-                
+                if(barState==0){
+                    updateBars(svgBars, barScales, filteredState);
+                    
+                }
+                else{
+                    drawBars(svgBars, barScales, filteredState);
+                    barState=0
+                }
             }
             let slider = d3.select("#filter_slider");
-             let label = d3.select("#label");
-            let min = 0, 
-             max = d3.max(raw_data,d => d.events) + 10;
+            let label = d3.select("#label");
+            let min = 1999 
+                max = 2016
              slider
                 .attr("min", min)
                 .attr("max", max)
                 .attr("value", 1)
                 .attr("step", 1)
-            
-
-	  	}
+                .on("input", function(d) {
+                    label.text(this.value); // use `this` on the place of slider
+                    let filteredStatePerYear= filteredState.filter(d=> d.Ano===this.value);
+                    if(barState==0){
+                        drawBars(svgBars, barScales, filteredStatePerYear);
+                        barState=1;
+                    }
+                    else
+                        updateBars(svgBars, barScales, filteredStatePerYear);
+                })        
+                
+        }
 	  </script>
 	</head>
 

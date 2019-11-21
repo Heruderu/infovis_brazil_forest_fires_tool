@@ -25,8 +25,14 @@
 
         }
        function drawBars(svgBars, scales, data){
-        let xBars = scales.x;
-        let yBars = scales.y;
+        let xBars = d3.scaleLinear()
+        .rangeRound([margin, width-margin])
+        .domain([0,d3.max(data,function(data,i){return i;})]);
+        let yBars = d3.scaleLinear()
+                    .range([margin,height - margin])
+                    .domain([d3.max(data, d=>+d.Número),0]);
+
+    
         barsRect = svgBars.selectAll("rect")
             .data(data)
                 .join("rect")
@@ -41,6 +47,8 @@
                     })
                 }    
         function updateBars(svgBars, scales, data){
+         
+
             let yBars = d3.scaleLinear()
                     .range([margin,height - margin])
                     .domain([d3.max(data, d=>+d.Número),0]);
@@ -52,8 +60,18 @@
                     // .delay(function (d) {
                         //    return (d * 100);    //transição proporcional ao valor
                         //})
-                        .attr("height", d =>height- yBars(d.Número))
                         .attr("y", function(d){return yBars(d.Número);})
+                        
+                        .attr("height", d =>height- yBars(d.Número))
                     console.log(d =>height- yBars(d.Número))
                 
+        }
+        function computeScales(data){
+            let xBars = d3.scaleLinear()
+                .rangeRound([margin, width-margin])
+                .domain([0,d3.max(data,function(data,i){return i;})]);
+           
+            let yBars = d3.scaleLinear()
+                    .range([margin,height - margin])
+                    .domain([d3.max(data, d=>+d.Número),0]);
         }
