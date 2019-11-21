@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+	  <meta charset="utf-8">
+	  <script src="https://d3js.org/d3.v5.js"></script>
+      <script src="https://d3js.org/topojson.v1.min.js"></script>
+      <script type="text/javascript" src="barLib.js"></script>
+	  <style>
+	  </style>
+
+      <script type="text/javascript">
+         let margin = 75,
+            width = 1400 - margin,
+            height = 600 - margin;
+        
+        
+
+
+      let barData;
+     let rawData;
+	  	function loadMap(brazilstates) {
+        
+					
+				let year= d3.map();
+				let fires_total_state = d3.map();
+				let month = d3.map();
+				let state = d3.map();
+
+				let svg = d3.select("#div1")
+					.append("svg")
+          .attr("width", width + margin)
+          .attr("height", height + margin)
+          .append('g')
+          .attr('class', 'map');
+
+        let projection = d3.geoMercator()
+        	.center([-20, -15])
+					.scale(650)
+					.translate([width / 2, height / 2]);
+
+        let path = d3.geoPath().projection(projection);
+
+			  let mapa = d3.csv("new_csv.csv")
+			  	.then((data) => {
+			  		let newdata = data.map( d => {
+              d["Número"] = +d["Número"];
+              d["Estado"] = d["Estado"];
+                      
+              return d;
+                    });
+                    rawData=newdata;  
+
+            fillStates(newdata);
+			  	})
+			  	.catch(err => {console.log(err)});
+
+			  function fillStates(data) {
+			  	let nested = d3.nest()
+                        .key(function (d) {
+                            return d["Estado"];
+                        })
+                        .rollup(function (leaves) {
+                        let total = d3.sum(leaves, function (d) {
+                            return d["Número"];
+                        });
+
+                        return +total;
+                        })
+
+                        .entries(data);
+
+          //console.log(nested);
+         	let numero_extent = d3.extent(nested, function (d) {
+  					return d.value;
+					});
+
+          let states = topojson.feature(brazilstates, brazilstates.objects.foo);
+	  			let states_contour = topojson.mesh(brazilstates, brazilstates.objects.foo.geometries);
+
+					let color = d3.scaleQuantize([1,10])
+		    		.domain(numero_extent)
+		    		.range(d3.schemeReds[5]);
+
+		    	let total = 0;
+				  svg.append("g")
+			  		.selectAll("path")
+			          .data(states.features)
+			    	    .enter()
+                            .append("path")
+                                .attr("class", "state")
+                                .attr("stroke", "white")
+                                .attr("fill", function(d) {
+                                    let value = nested.forEach(function funcion(n) {
+                                        fires_total_state.set(n.key, n.value);
+                                            if (n.key == d.properties.codarea) {
+                                            total = n.value;
+                                        }
+                                    })
+                                    return color(total);		
+                                })
+                                .attr("d", path)
+                                //.on("mouseover", handleMouseOver)
+                                //.on("mouseout", handleMouseOut)
+                                .on("click", function(d) { // selection scatter
+                                    //console.log(d.properties.codarea)
+                                    getSingleStateData(d.properties.codarea);
+                                    
+                                });
+                    
+                  
+
+                    
+
+
+				  svg.append("g")
+				  	.append("path")
+				    .datum(states_contour)
+				    .attr("d", path)
+				    .attr("class", "state_contour");
+
+
+				  let current_color = 0;
+					function handleMouseOver(d, i) {
+						d3.select(this).attr("stroke","black");
+						d3.select(this).attr("stroke-width", 3);
+						console.log(d.properties.codarea);
+						console.log(fires_total_state.get(d.properties.codarea));
+				  	svg.append("text").attr("id", function() {return "t" + fires_total_state.get(d.properties.codarea);})
+				  		.attr("x", function() { return margin + 20; })
+	            .attr("y", function() { return margin - 50 ; })
+	            .attr("text-anchor","middle")
+	            .attr("fill","black")
+	            .attr("size",200)
+	            .text(function() {return d.properties.codarea + ":" + fires_total_state.get(d.properties.codarea)});
+	        }
+
+	        function handleMouseOut(d, i) {
+	          d3.select(this).attr("stroke", "white");
+	          d3.select(this).attr("stroke-width", 1);
+	          d3.select("#t" + fires_total_state.get(d.properties.codarea)).remove();
+	        }
+			  }
+        
+
+            //data filter
+            // save state of visual variables to brush and filter
+            let svgMap,svgBars;
+
+            let barsRect, barScales;
+            let scatterCircles, scatterScales,scatterLine,scatterText;
+            let raw_geo_data;
+           
+            d3.csv("test.csv")
+                .then((data) => {
+                    let newData = data.map( d => {
+                        d["Ano"] = +d["Ano"]; //cast to float
+                        d["Numero"] = +d["Numero"]
+                        return d;
+                    });
+
+                    let ret= setupVis(newData)//funçoes
+                    svgBars=ret.svg;
+                    barScales=ret.scales;
+                                    });
+
+            
+            function getSingleStateData(key){
+                let filteredState= rawData.filter(d=> d.Estado===key);
+                // console.table(filteredState)   
+                updateBars(svgBars, barScales, filteredState)
+                
+            }
+            let slider = d3.select("#filter_slider");
+             let label = d3.select("#label");
+            let min = 0, 
+             max = d3.max(raw_data,d => d.events) + 10;
+             slider
+                .attr("min", min)
+                .attr("max", max)
+                .attr("value", 1)
+                .attr("step", 1)
+            
+
+	  	}
+	  </script>
+	</head>
+
+	<body>
+
+		<script type="text/javascript">
+			let mapLoaded = d3.json("brazilstates.json");
+			mapLoaded.then(loadMap);
+        </script>
+        <div id = "div1"></div>
+        <div id = "div2"></div>
+        <div id="filter_container">
+                <label>Events: <input type="range" id="filter_slider"/> </label>
+                <p id="label"> </p>
+        </div>
+
+	</body>
