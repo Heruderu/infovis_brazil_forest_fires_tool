@@ -13,7 +13,8 @@
             console.log(d3.max(data, d=>+d.Número));  //PROBLEMA
             barScales = {"x":xBars, "y": yBars}
         
-            
+        
+
             drawBars(svgBars, barScales, data);
             ret={"svg":svgBars, "scales":barScales }
             return ret;
@@ -37,10 +38,10 @@
                     })
 
         let x_axis = d3.axisBottom(xBars);
-        d3.select("svg")
+        d3.select("svgBars")
             .append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + (2*height) + ")")
+                .attr("transform", "translate(0," + (height+margin) + ")")
                 .call(x_axis);
             //y axis
         let y_axis = d3.axisLeft(yBars);
@@ -65,13 +66,13 @@
         }
         function computeXScale(data){
             let xBars = d3.scaleLinear()
-                .rangeRound([margin, width-margin])
+                .rangeRound([margin, width])
                 .domain([0,d3.max(data,function(data,i){return i;})]);
             return xBars;    
         }   
         function computeYScale(data){
             let yBars = d3.scaleLinear()
-                    .range([margin,height - margin])
+                    .range([margin,height ])
                     .domain([d3.max(data, d=>+d.Número),0]);
             return yBars;   
         }
