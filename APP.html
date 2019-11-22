@@ -78,9 +78,51 @@
           let states = topojson.feature(brazilstates, brazilstates.objects.foo);
 	  			let states_contour = topojson.mesh(brazilstates, brazilstates.objects.foo.geometries);
 
-					let color = d3.scaleQuantize([1,10])
+					let color = d3.scaleQuantize()
 		    		.domain(numero_extent)
-		    		.range(d3.schemeReds[5]);
+		    		.range(d3.schemeReds[9]);
+
+                let legendLabels = d3.range(0, numero_extent[1], numero_extent[1]/9);
+                console.log(legendLabels);
+
+                let legend = svg.selectAll('g.legendEntry')
+                    .data(color.range())
+                    .enter()
+                    .append('g').attr('class', 'legendEntry');
+
+                    legend
+                    .append('rect')
+                    .attr("x", 20)
+                    .attr("y", function(d, i) {
+                      return height - margin - i * 12;
+                    })
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .style("stroke", "black")
+                    .style("stroke-width", 0.5)
+                    .style("fill", function(d){return d;}); 
+
+                  legend
+                    .append('text')
+                    .attr('font-size', 12)
+                    .attr("x", 35) //leave 5 pixel space after the <rect>
+                    .attr("y", function(d, i) {
+                       return height - margin - i * 12;
+                    })
+                    .attr("dy", "0.8em") //place text one line *below* the x,y point
+                    .text(function(d,i) {
+                        var extent = color.invertExtent(d);
+                        //extent will be a two-element array, format it however you want:
+                        var format = d3.format("0.0f");
+                        if (i == 0) {
+                            return 0.0 + " < " + format(+extent[1]);
+                        }
+                        if (i == d.length + 1) {
+                            return "> " + format(+extent[1]);
+                        }
+                        return format(+extent[0]) + " - " + format(+extent[1]);
+                    });
+
 
 		    	let total = 0;
 				  svg.append("g")
@@ -89,7 +131,7 @@
 			    	    .enter()
                             .append("path")
                                 .attr("class", "state")
-                                .attr("stroke", "white")
+                                .attr("stroke", "gray")
                                 .attr("fill", function(d) {
                                     let value = nested.forEach(function funcion(n) {
                                         fires_total_state.set(n.key, n.value);
@@ -100,8 +142,8 @@
                                     return color(total);		
                                 })
                                 .attr("d", path)
-                                //.on("mouseover", handleMouseOver)
-                                //.on("mouseout", handleMouseOut)
+                                .on("mouseover", handleMouseOver)
+                                .on("mouseout", handleMouseOut)
                                 .on("click", function(d) { // selection scatter
                                     //console.log(d.properties.codarea)
                                     getSingleStateData(d.properties.codarea);
@@ -113,34 +155,33 @@
                     
 
 
-				  svg.append("g")
-				  	.append("path")
-				    .datum(states_contour)
-				    .attr("d", path)
-				    .attr("class", "state_contour");
+                  svg.append("g")
+                    .append("path")
+                    .datum(states_contour)
+                    .attr("d", path)
+                    .attr("class", "state_contour");
 
+                    function handleMouseOver(d, i) {
+                        d3.select(this).attr("stroke","black");
+                        d3.select(this).attr("stroke-width", 3);
+                        console.log(d.properties.codarea);
+                        console.log(fires_total_state.get(d.properties.codarea));
+                    svg.append("text").attr("id", function() {return "t" + fires_total_state.get(d.properties.codarea);})
+                        .attr("x", function() { return margin + 80; })
+                .attr("y", function() { return margin - 60 ; })
+                .attr("text-anchor","middle")
+                .attr("fill","black")
+                .attr("size",200)
+                .text(function() {return d.properties.codarea + ": " + fires_total_state.get(d.properties.codarea)
+                + " focos de incêndio."});
+            }
 
-				  let current_color = 0;
-					function handleMouseOver(d, i) {
-						d3.select(this).attr("stroke","black");
-						d3.select(this).attr("stroke-width", 3);
-						console.log(d.properties.codarea);
-						console.log(fires_total_state.get(d.properties.codarea));
-				  	svg.append("text").attr("id", function() {return "t" + fires_total_state.get(d.properties.codarea);})
-				  		.attr("x", function() { return margin + 20; })
-	            .attr("y", function() { return margin - 50 ; })
-	            .attr("text-anchor","middle")
-	            .attr("fill","black")
-	            .attr("size",200)
-	            .text(function() {return d.properties.codarea + ":" + fires_total_state.get(d.properties.codarea)});
-	        }
-
-	        function handleMouseOut(d, i) {
-	          d3.select(this).attr("stroke", "white");
-	          d3.select(this).attr("stroke-width", 1);
-	          d3.select("#t" + fires_total_state.get(d.properties.codarea)).remove();
-	        }
-			  }
+            function handleMouseOut(d, i) {
+              d3.select(this).attr("stroke", "gray");
+              d3.select(this).attr("stroke-width", 1);
+              d3.select("#t" + fires_total_state.get(d.properties.codarea)).remove();
+            }
+              }
         
 
             //data filter
