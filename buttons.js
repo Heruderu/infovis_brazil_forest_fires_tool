@@ -135,7 +135,7 @@ function action5()
 function action6()
 {
   document.getElementById("filter_slider2").style.display = 'inline';
-  countryState=countryState1;
+  countryState=countryState2;
   let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
     console.log(filteredStatePerYear)
@@ -194,10 +194,12 @@ window.addEventListener("click", function(event) {
   function countryPlot()
             {
                 countryState=updateCountryState(1);
+                updateName("Brazil");
                 if (currentDiv=="#div2")
                   action1()
                 else if(currentDiv=="#div3")
                   action4()   
+
             }
 
 function updateCountryState(newState)
@@ -214,3 +216,27 @@ function updateCountryState(newState)
         return countryState2;
     }   
 }
+
+function updateStates(state)
+{
+     if (currentDiv=="#div2")
+     {    console.log("hello")
+         filteredState1=state;
+     }
+     else if(currentDiv=="#div3")
+     {
+         console.log("hello2")
+     filteredState2=state;
+     }   
+ }
+ function updateName(name)
+{
+     if (currentDiv=="#div2")
+     {    
+         document.getElementById("d1").firstChild.data=name;
+     }
+     else if(currentDiv=="#div3")
+     {
+         document.getElementById("d2").firstChild.data=name;
+     }   
+ }

@@ -141,7 +141,7 @@
         <div id = "div1" class="svg-container" ></div>
         <div id = "div2" onclick="setCurrentDiv2()" ></div>
             <div class="dropdown" id="dropdown1">
-                    <button onclick="myFunction('myDropdown1')" class="dropbtn">Dropdown</button>
+                    <button onclick="myFunction('myDropdown1')" class="dropbtn" id ="d1">Dropdown</button>
                     <div id="myDropdown1" class="dropdown-content">
                     <a href="#Year" onclick="action1()">Year</a>
                     <a href="#Month" onclick="action2()">Month</a>
@@ -155,8 +155,8 @@
      <div id = "div3" onclick="setCurrentDiv3()"></div>
      
         <div class="dropdown" id="dropdown2">
-                <button onclick="myFunction('myDropdown2')" class="dropbtn1">Dropdown</button>
-                <div id="myDropdown2" class="dropdown-content1">
+                <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2">Dropdown</button>
+                <div id="myDropdown2" class="dropdown-content1" >
                     <a href="#Year" onclick="action4()">Year</a>
                     <a href="#Month" onclick="action5()">Month</a>
                     <a href="#SingleYear" onclick="action6()">Single Year</a>
@@ -276,8 +276,8 @@
                    filteredState2=countryMonthSum;
                    
 
-
-
+                   document.getElementById("d1").firstChild.data="Brazil"
+                   document.getElementById("d2").firstChild.data="Brazil";
 
                    console.log(newdata)
                  })
@@ -452,6 +452,8 @@
            //setupVis(filteredState)
 
            function getSingleStateData(key){
+            
+                updateName(key);
                countryState= updateCountryState(0);
                filteredState= rawData.filter(d=> d.Estado===key);
                 let dados;
@@ -491,7 +493,17 @@
                 filteredState2=state;
                 }   
             }
-           
+            function updateName(name)
+           {
+                if (currentDiv=="#div2")
+                {    
+                    document.getElementById("d1").firstChild.data=name;
+                }
+                else if(currentDiv=="#div3")
+                {
+                    document.getElementById("d2").firstChild.data=name;
+                }   
+            }
             
             
        }
