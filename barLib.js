@@ -22,7 +22,7 @@
             //y axis
              y_axis = d3.axisLeft(yBars);
             svgBars.append("g")
-                    .attr("class", "yaxis")
+                    .attr("class", "y axis")
                     .attr("transform", "translate("+margin+" ,-40)")
                     .call(y_axis);
 
@@ -37,6 +37,7 @@
          let width =barWidth;
         let xBars = computeXScale(data);
         let yBars = computeYScale(data);
+
         barsRect = svgBars.selectAll("rect")
             .data(data)
                 .join("rect")
@@ -60,7 +61,9 @@
                 .attr("height", d =>height- yBars(d.Número));
      
         y_axis = d3.axisLeft(yBars);
-        svgBars.selectAll("g.yaxes")
+        y_axis.scale(yBars);
+        svgBars.selectAll("g.y.axis")
+            .transition()
             .call(y_axis);
 
         x_axis = d3.axisBottom(xBars);
@@ -77,7 +80,7 @@
             let width =barWidth;
             let yBars = computeYScale(data);
             let xBars = computeXScale(data);
-
+         
             
             if(barState==1)
                 return    drawBars(svgBars, scales, data);
@@ -85,11 +88,17 @@
           
 
             x_axis = d3.axisBottom(xBars);
-            svgBars.selectAll("g.x.axis")
+            svgBars.select("g.x.axis")
                     .call(x_axis);
-    
+            
+
+            
+
             y_axis = d3.axisLeft(yBars);
-            svgBars.selectAll("g.y.axes")
+           
+            y_axis.scale(yBars);
+            d3.select("g.y.axis")
+                .transition()
                 .call(y_axis);    
                 
             barsRect=svgBars.selectAll("rect")
@@ -113,9 +122,9 @@
         function computeYScale(data){
             let width =barWidth;
             height=barheight;
-            let yBars = d3.scaleLinear()
+            yBars = d3.scaleLinear()
                     .range([margin,height ])
                     .domain([d3.max(data, d=>+d.Número),0]);
-            
+                    console.log(d3.max(data, d=>+d.Número))
             return yBars;   
         }

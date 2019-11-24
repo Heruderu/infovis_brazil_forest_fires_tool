@@ -150,7 +150,7 @@ function myFunction(str) {
   }
   
   // Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
+  window.addEventListener("click", function(event) {
     if (!event.target.matches('.dropbtn')) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       var i;
@@ -161,10 +161,14 @@ window.onclick = function(event) {
         }
       }
     }
-  }
+  });
 
-  window.onclick = function(event) {
-    if (!event.target.matches('.dropbtn1')) {
+  
+
+
+window.addEventListener("click", function(event) {
+
+    if (!event.target.matches('.dropbtn1') ) {
       var dropdowns = document.getElementsByClassName("dropdown-content1");
       var i;
       for (i = 0; i < dropdowns.length; i++) {
@@ -174,4 +178,5 @@ window.onclick = function(event) {
         }
       }
     }
-  }
+  });
+  
