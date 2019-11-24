@@ -22,7 +22,7 @@
             //y axis
              y_axis = d3.axisLeft(yBars);
             svgBars.append("g")
-                    .attr("class", "y axis")
+                    .attr("class", "yaxis")
                     .attr("transform", "translate("+margin+" ,-40)")
                     .call(y_axis);
 
@@ -59,14 +59,15 @@
                 .attr("y", function(d){return yBars(d.Número)-40;})
                 .attr("height", d =>height- yBars(d.Número));
      
-     
-                x_axis = d3.axisBottom(xBars);
+        y_axis = d3.axisLeft(yBars);
+        svgBars.selectAll("g.yaxes")
+            .call(y_axis);
+
+        x_axis = d3.axisBottom(xBars);
         svgBars.selectAll("g.x.axis")
                 .call(x_axis);
 
-        y_axis = d3.axisLeft(yBars);
-        svgBars.selectAll("g.y.axes")
-            .call(y_axis);
+  
 
         
         
@@ -82,6 +83,15 @@
                 return    drawBars(svgBars, scales, data);
 
           
+
+            x_axis = d3.axisBottom(xBars);
+            svgBars.selectAll("g.x.axis")
+                    .call(x_axis);
+    
+            y_axis = d3.axisLeft(yBars);
+            svgBars.selectAll("g.y.axes")
+                .call(y_axis);    
+                
             barsRect=svgBars.selectAll("rect")
                 .data(data)
                     .transition()
@@ -90,13 +100,6 @@
                         .ease(d3.easeLinear)
                         .attr("y", function(d){return yBars(d.Número)-40;})
                         .attr("height", d =>height- yBars(d.Número));
-                   
-
-
-
-
-
-
                 
         }
         function computeXScale(data){

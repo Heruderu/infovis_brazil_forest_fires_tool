@@ -97,7 +97,13 @@
                 text-decoration: none;
                 display: block;
             }
-            .dropdown a:hover {background-color: #ddd;}
+            .dropdown-content1 a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+            .dropdown a:hover {background-color: rgb(141, 135, 135);}
             .show {display: block;}
 	  </style>
 
@@ -113,7 +119,7 @@
                     <div id="myDropdown1" class="dropdown-content">
                     <a href="#Year" onclick="action1()">Year</a>
                     <a href="#Month" onclick="action2()">Month</a>
-                    <a href="#contact" onclick="action3()"></a>
+                    <a href="#SingleYear" onclick="action3()">Single Year</a>
             </div>
             <div class="filter_container" id ="filter_container1">
                     <label><input type="range" id="filter_slider"/> </label>
@@ -126,13 +132,13 @@
                 <div id="myDropdown2" class="dropdown-content1">
                     <a href="#Year" onclick="action4()">Year</a>
                     <a href="#Month" onclick="action5()">Month</a>
-                    <a href="#contact" onclick="action6()"></a>
+                    <a href="#SingleYear" onclick="action6()">Single Year</a>
         </div>
 
         
         <div class="filter_container" id ="filter_container2">
                 <label><input type="range" id="filter_slider2"/> </label>
-                <p id="label"> </p> 
+                <p id="label2"> </p> 
         </div>
 
 
@@ -174,18 +180,20 @@
            let barsRect, barScales;
            let scatterCircles, scatterScales,scatterLine,scatterText;
            let raw_geo_data;
-           let filteredState;
+           let filteredState,filteredState1,filteredState2;
            var ele=document.getElementById('div2')
            let barheight=parseInt(ele.clientHeight);
            let barWidth=parseInt(ele.clientWidth)-50;
-           let countrySum;
+           let countryMonthSum,countryYearSum;
            
 
         //State variables
         let  currentDiv = "#div2";
         let svgBars;
         let barState=0; //0-> total, 1-> dados por ano
-
+        let countryState=1,
+            countryState1=1,
+            countryState2=1; // 00 01 10 11   
 
      let barData;
     let rawData;
@@ -362,7 +370,7 @@
 
              //console.log(fires_total_state)
            
-           d3.csv("test.csv")
+           d3.csv("new_csv.csv")
                .then((data) => {
                    let newData = data.map( d => {
                        d["Ano"] = +d["Ano"]; //cast to float
@@ -370,21 +378,29 @@
                        return d;
                    });
 
-                   let ret=setupVis(newData,"#div2");//funçoes
-                   let ret2=setupVis(newData,"#div3");
+                   countryYearSum=getYearSum(newData);
+                   countryMonthSum=getMonthSum(newData); 
+                   let ret=setupVis(countryYearSum,"#div2");//funçoes
+                   let ret2=setupVis(countryMonthSum,"#div3");
                    svgBars=ret.svg;
                    barScales=ret.scales;
                    svgBars1=ret.svg;
 
                    svgBars2=ret2.svg;
-                                   });
+                   
+                   filteredState=newData
+                   filteredState1=filteredState;
+                   filteredState2=countryMonthSum;
+                    });
         
          
                                    //filteredState=                        
            //setupVis(filteredState)
 
            function getSingleStateData(key){
-               filteredState= rawData.filter(d=> d.Estado===key);
+                updateCountryState
+                filteredState= rawData.filter(d=> d.Estado===key);
+                updateStates(filteredState);
                // console.table(filteredState)   
               // if(barState==0){
                    updateBars(svgBars, barScales, filteredState);
@@ -396,11 +412,36 @@
                //}
            }
            
-        slider();
+        slider("#filter_slider","#label");
+        slider("#filter_slider2","#label2");
            
          
-
-           
+           function updateStates(state)
+           {
+                if (currentDiv=="#div2")
+                {    console.log("hello")
+                    filteredState1=state;
+                }
+                else if(currentDiv=="#div3")
+                {
+                    console.log("hello2")
+                filteredState2=state;
+                }   
+            }
+            function updateCountryState()
+           {
+                if (currentDiv=="#div2")
+                {    
+                    countryState1=0;
+                    return countryState1;
+                }
+                else if(currentDiv=="#div3")
+                {
+                    
+                    countryState2=0;
+                    return countryState2;
+                }   
+            }
                
        }
      </script>
