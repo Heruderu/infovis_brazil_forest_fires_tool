@@ -22,9 +22,11 @@
                 position:absolute;
                 width: 50%;
                 height: 100%;
+
+
             
                 
-                background-color: teal;
+                background-color: #D0D0D0;
             }
             #div2{
                 position:absolute;
@@ -33,7 +35,7 @@
                 left: 50%;
                 top:0px;
                 
-                background-color:yellowgreen;
+                background-color: #E9EEC3;
             }
             #div3{
                 position:fixed;
@@ -42,7 +44,20 @@
                 left: 50%;
                 top:50%;
                 
-                background-color:blue;
+                background-color: #C4F9F4;
+            }
+            .svg-container { 
+              display: inline-block;
+              position: relative;
+              width: 100%;
+              vertical-align: middle; 
+              overflow: hidden; 
+            }
+            .svg-content-responsive {
+              display: inline-block;
+              position: absolute;
+              top: 10px;
+              left: 0;
             }
             #filter_container1{
                 position:fixed;
@@ -105,6 +120,17 @@
             }
             .dropdown a:hover {background-color: rgb(141, 135, 135);}
             .show {display: block;}
+
+            tip.tooltip {   
+                position: absolute;         
+                width: auto;                    
+                height: auto;
+                padding: 3px;                            
+                font: 14px sans-serif;
+                color: white;     
+                background: #242424;         
+                pointer-events: none;   
+            }
 	  </style>
 
      
@@ -112,7 +138,7 @@
 
 	<body>
 
-        <div id = "div1"></div>
+        <div id = "div1" class="svg-container"></div>
         <div id = "div2" onclick="setCurrentDiv2()" ></div>
             <div class="dropdown" id="dropdown1">
                     <button onclick="myFunction('myDropdown1')" class="dropbtn">Dropdown</button>
@@ -188,7 +214,7 @@
            
 
         //State variables
-        let  currentDiv = "#div2";
+        let currentDiv = "#div2";
         let svgBars;
         let barState=0; //0-> total, 1-> dados por ano
         let countryState=1,
@@ -206,15 +232,17 @@
                let state = d3.map();
 
                let svg = d3.select("#div1")
+                              .classed("svg-container", true)
                               .append("svg")
-                                .attr("width", width + margin)
-                                .attr("height", height + margin)
+                                .attr("preserveAspectRatio", "xMinYMin meet")
+                                .attr("viewBox", "0 0 600 600")
+                                //.classed("svg-content-responsive", true)
                                 .append('g')
                                 .attr('class', 'map');
 
        let projection = d3.geoMercator()
            .center([-20, -15])
-                   .scale(650)
+                   .scale(500)
                    .translate([width / 2, height / 2]);
 
        let path = d3.geoPath().projection(projection);
@@ -303,6 +331,9 @@
                        return format(+extent[0]) + " - " + format(+extent[1]);
                    });
 
+                let tip = d3.select("body").append("tip")
+                  .attr("class", "tooltip")
+                  .style("opacity",0);
 
                let total = 0;
                  svg.append("g")
@@ -342,24 +373,23 @@
                    .attr("class", "state_contour");
 
                    function handleMouseOver(d, i) {
+                    let label = "Estado: " + d.properties.codarea + "<br>" + "Queimadas: " + fires_total_state.get(d.properties.codarea);
+                    tip.transition()
+                    .duration(200)
+                    .style("opacity", 1);
+                    tip.html(label)
+                    .style("left", (d3.event.pageX)+"px")
+                    .style("top",(d3.event.pageY)+"px");
                        d3.select(this).attr("stroke","black");
                        d3.select(this).attr("stroke-width", 3);
-                      // console.log(d.properties.codarea);
-                       //console.log(fires_total_state.get(d.properties.codarea));
-                   svg.append("text").attr("id", function() {return "t" + fires_total_state.get(d.properties.codarea);})
-                       .attr("x", function() { return margin + 80; })
-               .attr("y", function() { return margin - 60 ; })
-               .attr("text-anchor","middle")
-               .attr("fill","black")
-               .attr("size",200)
-               .text(function() {return d.properties.codarea + ": " + fires_total_state.get(d.properties.codarea)
-               + " focos de incêndio."});
            }
 
            function handleMouseOut(d, i) {
+            tip.transition()
+                    .duration(400)
+                    .style("opacity",0);
              d3.select(this).attr("stroke", "gray");
              d3.select(this).attr("stroke-width", 1);
-             d3.select("#t" + fires_total_state.get(d.properties.codarea)).remove();
            }
        
         }

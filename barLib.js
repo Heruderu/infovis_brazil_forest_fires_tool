@@ -44,7 +44,7 @@
                     .attr("y", height-40)
                     .attr("width", (width - margin)/data.length)
                     .attr("height", 0)
-                    .style("fill","teal")
+                    .style("fill", "#B00000")
                     .style("stroke","black")
                     .on("mouseover",function(d){    
                             console.log(d.Número);
