@@ -1,7 +1,7 @@
 
         function setupVis(data,str){
-            height=barheight;
-           
+            let height=barheight;
+            let width =barWidth;
             
                 // scatterplot setup
             let svgBars = d3.select(str).append("svg")
@@ -33,23 +33,34 @@
 
         }
        function drawBars(svgBars, scales, data){
-         height=barheight;
+         let height=barheight;
+         let width =barWidth;
         let xBars = computeXScale(data);
         let yBars = computeYScale(data);
         barsRect = svgBars.selectAll("rect")
             .data(data)
                 .join("rect")
                     .attr("x",function(d,i){return xBars(i)})
-                    .attr("y", function(d){return yBars(d.Número)-40;})
-                    .attr("width", (width/2 - margin)/data.length)
-                    .attr("height", d =>height- yBars(d.Número))
+                    .attr("y", height-40)
+                    .attr("width", (width - margin)/data.length)
+                    .attr("height", 0)
                     .style("fill","teal")
                     .style("stroke","black")
                     .on("mouseover",function(d){    
                             console.log(d.Número);
                     })
 
-        x_axis = d3.axisBottom(xBars);
+
+        barsRect=svgBars.selectAll("rect")
+        .data(data)
+            .transition()
+                .duration(400)
+                .ease(d3.easeLinear)
+                .attr("y", function(d){return yBars(d.Número)-40;})
+                .attr("height", d =>height- yBars(d.Número));
+     
+     
+                x_axis = d3.axisBottom(xBars);
         svgBars.selectAll("g.x.axis")
                 .call(x_axis);
 
@@ -61,24 +72,35 @@
         
         }    
         function updateBars(svgBars, scales, data){
-            height=barheight;
-
+            let height=barheight;
+            let width =barWidth;
             let yBars = computeYScale(data);
+            let xBars = computeXScale(data);
+
+            
+            if(barState==1)
+                return    drawBars(svgBars, scales, data);
+
+          
             barsRect=svgBars.selectAll("rect")
                 .data(data)
                     .transition()
+                       // .delay(400)
                         .duration(400)
                         .ease(d3.easeLinear)
-                    // .delay(function (d) {
-                        //    return (d * 100);    //transição proporcional ao valor
-                        //})
                         .attr("y", function(d){return yBars(d.Número)-40;})
-                        
-                        .attr("height", d =>height- yBars(d.Número))
-                    console.log(d =>height- yBars(d.Número))
+                        .attr("height", d =>height- yBars(d.Número));
+                   
+
+
+
+
+
+
                 
         }
         function computeXScale(data){
+            let width =barWidth;
             let xBars = d3.scaleLinear()
                 .rangeRound([margin, width])
                 .domain([0,d3.max(data,function(data,i){return i;})]);
@@ -86,6 +108,7 @@
             
         }   
         function computeYScale(data){
+            let width =barWidth;
             height=barheight;
             let yBars = d3.scaleLinear()
                     .range([margin,height ])

@@ -7,6 +7,7 @@
       <script src="https://d3js.org/topojson.v1.min.js"></script>
       <script type="text/javascript" src="barLib.js"></script>
       <script type="text/javascript" src="filter.js"></script>
+      <script type="text/javascript" src="buttons.js"></script>
 	  <style>
               html
              body {
@@ -48,6 +49,12 @@
                 left: 57%;
                 top:0%;
             }
+            #filter_slider{
+                display:none;
+            }
+            #filter_slider2{
+                display:none;
+            }
             #filter_container2{
                 position:fixed;
                 left: 57%;
@@ -75,8 +82,23 @@
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
                 z-index: 1;
             }
-
-            
+            .dropdown-content1 {
+                display: none;
+                position: absolute;
+                background-color: #f1f1f1;
+                min-width: 160px;
+                overflow: auto;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+            }
+            .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+            }
+            .dropdown a:hover {background-color: #ddd;}
+            .show {display: block;}
 	  </style>
 
      
@@ -85,31 +107,31 @@
 	<body>
 
         <div id = "div1"></div>
-        <div id = "div2" ></div>
+        <div id = "div2" onclick="setCurrentDiv2()" ></div>
             <div class="dropdown" id="dropdown1">
-                    <button onclick="myFunction()" class="dropbtn">Dropdown</button>
+                    <button onclick="myFunction('myDropdown1')" class="dropbtn">Dropdown</button>
                     <div id="myDropdown1" class="dropdown-content">
-                    <a href="#State">Home</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
+                    <a href="#Year" onclick="action1()">Year</a>
+                    <a href="#Month" onclick="action2()">Month</a>
+                    <a href="#contact" onclick="action3()"></a>
             </div>
             <div class="filter_container" id ="filter_container1">
                     <label><input type="range" id="filter_slider"/> </label>
                     <p id="label"> </p> 
             </div>     
-     <div id = "div3" ></div>
+     <div id = "div3" onclick="setCurrentDiv3()"></div>
      
         <div class="dropdown" id="dropdown2">
-                <button onclick="myFunction()" class="dropbtn">Dropdown</button>
-                <div id="myDropdown2" class="dropdown-content">
-                <a href="#State">Home</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+                <button onclick="myFunction('myDropdown2')" class="dropbtn1">Dropdown</button>
+                <div id="myDropdown2" class="dropdown-content1">
+                    <a href="#Year" onclick="action4()">Year</a>
+                    <a href="#Month" onclick="action5()">Month</a>
+                    <a href="#contact" onclick="action6()"></a>
         </div>
 
         
         <div class="filter_container" id ="filter_container2">
-                <label><input type="range" id="filter_slider"/> </label>
+                <label><input type="range" id="filter_slider2"/> </label>
                 <p id="label"> </p> 
         </div>
 
@@ -147,15 +169,23 @@
            // save state of visual variables to brush and filter
            let x_axis
            let y_axis
-           let svgMap,svgBars;
-           let barState=0; //0-> total, 1-> dados por ano
+           let svgMap;
+           
            let barsRect, barScales;
            let scatterCircles, scatterScales,scatterLine,scatterText;
            let raw_geo_data;
            let filteredState;
            var ele=document.getElementById('div2')
            let barheight=parseInt(ele.clientHeight);
+           let barWidth=parseInt(ele.clientWidth)-50;
            let countrySum;
+           
+
+        //State variables
+        let  currentDiv = "#div2";
+        let svgBars;
+        let barState=0; //0-> total, 1-> dados por ano
+
 
      let barData;
     let rawData;
@@ -186,12 +216,14 @@
                      let newdata = data.map( d => {
                                                 d["Número"] = +d["Número"];
                                                 d["Estado"] = d["Estado"];
-                                                        
+                                                d["Periodo"] =+d["Periodo"];
+                                                d["Ano"]=+d["Ano"]
                                                 return d;
                                                  });
                    rawData=newdata;  
                     fillStates(newdata);
                    // getMonthSum(newdata);
+                   console.log(newdata)
                  })
                  .catch(err => {console.log(err)});
           
@@ -339,9 +371,12 @@
                    });
 
                    let ret=setupVis(newData,"#div2");//funçoes
-                   setupVis(newData,"#div3");
+                   let ret2=setupVis(newData,"#div3");
                    svgBars=ret.svg;
                    barScales=ret.scales;
+                   svgBars1=ret.svg;
+
+                   svgBars2=ret2.svg;
                                    });
         
          
@@ -351,39 +386,21 @@
            function getSingleStateData(key){
                filteredState= rawData.filter(d=> d.Estado===key);
                // console.table(filteredState)   
-               if(barState==0){
+              // if(barState==0){
                    updateBars(svgBars, barScales, filteredState);
                    
-               }
-               else{
-                   drawBars(svgBars, barScales, filteredState);
-                   barState=0
-               }
+               //}
+               //else{
+                 //  drawBars(svgBars, barScales, filteredState);
+                   barState=0;
+               //}
            }
            
-        
+        slider();
            
          
 
-           let slider = d3.select("#filter_slider");
-           let label = d3.select("#label");
-           let min = 1999 
-               max = 2016
-            slider
-               .attr("min", min)
-               .attr("max", max)
-               .attr("value", 1)
-               .attr("step", 1)
-               .on("input", function(d) {
-                   label.text(this.value); // use `this` on the place of slider
-                   let filteredStatePerYear= filteredState.filter(d=> d.Ano===this.value);
-                   if(barState==0){
-                       drawBars(svgBars, barScales, filteredStatePerYear);
-                       barState=1;
-                   }
-                   else
-                       updateBars(svgBars, barScales, filteredStatePerYear);
-               })        
+           
                
        }
      </script>
