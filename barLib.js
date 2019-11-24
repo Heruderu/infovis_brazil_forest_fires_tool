@@ -14,13 +14,13 @@
            
             barScales = {"x":xBars, "y": yBars}
             
-            x_axis = d3.axisBottom(xBars);
+           let  x_axis = d3.axisBottom(xBars);
             svgBars.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + (height-40) + ")")
                 .call(x_axis);
             //y axis
-             y_axis = d3.axisLeft(yBars);
+             let y_axis = d3.axisLeft(yBars);
             svgBars.append("g")
                     .attr("class", "y axis")
                     .attr("transform", "translate("+margin+" ,-40)")
@@ -61,7 +61,7 @@
                 .attr("height", d =>height- yBars(d.Número));
      
         y_axis = d3.axisLeft(yBars);
-        y_axis.scale(yBars);
+        
         svgBars.selectAll("g.y.axis")
             .transition()
             .call(y_axis);
@@ -97,7 +97,7 @@
             y_axis = d3.axisLeft(yBars);
            
             y_axis.scale(yBars);
-            d3.select("g.y.axis")
+            svgBars.selectAll("g.y.axis")
                 .transition()
                 .call(y_axis);    
                 

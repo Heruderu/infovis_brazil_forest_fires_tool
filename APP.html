@@ -138,7 +138,7 @@
 
 	<body>
 
-        <div id = "div1" class="svg-container"></div>
+        <div id = "div1" class="svg-container" ></div>
         <div id = "div2" onclick="setCurrentDiv2()" ></div>
             <div class="dropdown" id="dropdown1">
                     <button onclick="myFunction('myDropdown1')" class="dropbtn">Dropdown</button>
@@ -146,6 +146,7 @@
                     <a href="#Year" onclick="action1()">Year</a>
                     <a href="#Month" onclick="action2()">Month</a>
                     <a href="#SingleYear" onclick="action3()">Single Year</a>
+                    <a href="#Country" onclick="countryPlot()">Country Data</a>
             </div>
             <div class="filter_container" id ="filter_container1">
                     <label><input type="range" id="filter_slider"/> </label>
@@ -159,6 +160,7 @@
                     <a href="#Year" onclick="action4()">Year</a>
                     <a href="#Month" onclick="action5()">Month</a>
                     <a href="#SingleYear" onclick="action6()">Single Year</a>
+                    <a href="#Country" onclick="countryPlot()">Country Data</a>
         </div>
 
         
@@ -216,11 +218,11 @@
         //State variables
         let currentDiv = "#div2";
         let svgBars;
-        let barState=0; //0-> total, 1-> dados por ano
+        let barState=1; //0-> total, 1-> dados por ano
         let countryState=1,
             countryState1=1,
             countryState2=1; // 00 01 10 11   
-
+        let flag=1;
      let barData;
     let rawData;
          function loadMap(brazilstates) {
@@ -258,7 +260,25 @@
                                                  });
                    rawData=newdata;  
                     fillStates(newdata);
-                   // getMonthSum(newdata);
+                    
+                    countryYearSum=getYearSum(newdata);
+                   countryMonthSum=getMonthSum(newdata); 
+                   let ret=setupVis(countryYearSum,"#div2");//funçoes
+                   let ret2=setupVis(countryMonthSum,"#div3");
+                   svgBars=ret.svg;
+                   barScales=ret.scales;
+                   svgBars1=ret.svg;
+
+                   svgBars2=ret2.svg;
+                   
+                   filteredState=newdata
+                   filteredState1=filteredState;
+                   filteredState2=countryMonthSum;
+                   
+
+
+
+
                    console.log(newdata)
                  })
                  .catch(err => {console.log(err)});
@@ -408,7 +428,7 @@
                        return d;
                    });
 
-                   countryYearSum=getYearSum(newData);
+                 /*  countryYearSum=getYearSum(newData);
                    countryMonthSum=getMonthSum(newData); 
                    let ret=setupVis(countryYearSum,"#div2");//funçoes
                    let ret2=setupVis(countryMonthSum,"#div3");
@@ -421,6 +441,10 @@
                    filteredState=newData
                    filteredState1=filteredState;
                    filteredState2=countryMonthSum;
+                   
+                   */
+
+
                     });
         
          
@@ -428,12 +452,21 @@
            //setupVis(filteredState)
 
            function getSingleStateData(key){
-                updateCountryState
-                filteredState= rawData.filter(d=> d.Estado===key);
+               countryState= updateCountryState(0);
+               filteredState= rawData.filter(d=> d.Estado===key);
+                let dados;
+               if(flag==1)
+                    dados = getYearSum( filteredState);
+               else if(flag==2)
+                     dados = filteredState;
+                else if(flag==3)
+                     dados=  getFilteredStatePerYearInit();
+
+             
                 updateStates(filteredState);
                // console.table(filteredState)   
               // if(barState==0){
-                   updateBars(svgBars, barScales, filteredState);
+                   updateBars(svgBars, barScales, dados);
                    
                //}
                //else{
@@ -458,21 +491,9 @@
                 filteredState2=state;
                 }   
             }
-            function updateCountryState()
-           {
-                if (currentDiv=="#div2")
-                {    
-                    countryState1=0;
-                    return countryState1;
-                }
-                else if(currentDiv=="#div3")
-                {
-                    
-                    countryState2=0;
-                    return countryState2;
-                }   
-            }
-               
+           
+            
+            
        }
      </script>
 	</body>

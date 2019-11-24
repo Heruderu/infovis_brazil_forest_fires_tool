@@ -54,11 +54,13 @@ function action1()
   else
     dados= filteredState; 
   
+  barState=1;
   let yearSum=getYearSum(dados)
   let xBars =  computeXScale(yearSum);
   let yBars =  computeYScale(yearSum);
   scales = {"x":xBars, "y": yBars}
   updateBars(svgBars, scales, yearSum);
+  flag=1;
   
 }
 function action2()
@@ -75,6 +77,7 @@ function action2()
   let yBars =  computeYScale(dados);
   scales = {"x":xBars, "y": yBars}
   updateBars(svgBars, scales, dados);
+  flag=2;
 }
 function action3()
 {
@@ -84,7 +87,7 @@ function action3()
     barState=1;
     console.log(filteredStatePerYear)
     updateBars(svgBars, barScales, filteredStatePerYear);
-
+    flag=3;
 
 }
 
@@ -107,10 +110,12 @@ function action4()
   scales = {"x":xBars, "y": yBars}
   barState=1;
   updateBars(svgBars, scales, yearSum)
+  flag=1;
+
 }
 function action5()
 {
-  document.getElementById("filter_slider").style.display = 'none';
+  document.getElementById("filter_slider2").style.display = 'none';
   barState=1;
   
   let dados;
@@ -123,6 +128,8 @@ function action5()
   let yBars =  computeYScale(filteredState);
   scales = {"x":xBars, "y": yBars}
   updateBars(svgBars, scales, filteredState);
+  flag=2;
+
 }
 
 function action6()
@@ -134,6 +141,7 @@ function action6()
     console.log(filteredStatePerYear)
     updateBars(svgBars, barScales, filteredStatePerYear);
 
+    flag=3;
 
 }
 
@@ -179,4 +187,30 @@ window.addEventListener("click", function(event) {
       }
     }
   });
-  
+  window.addEventListener("click", function(event) {
+    if (event.target.matches("#div1") )
+        countryPlot();
+  });
+  function countryPlot()
+            {
+                countryState=updateCountryState(1);
+                if (currentDiv=="#div2")
+                  action1()
+                else if(currentDiv=="#div3")
+                  action4()   
+            }
+
+function updateCountryState(newState)
+{
+    if (currentDiv=="#div2")
+    {    
+        countryState1=newState;
+        return countryState1;
+    }
+    else if(currentDiv=="#div3")
+    {
+        
+        countryState2=newState;
+        return countryState2;
+    }   
+}
