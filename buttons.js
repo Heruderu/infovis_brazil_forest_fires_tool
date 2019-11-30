@@ -240,3 +240,10 @@ function updateStates(state)
          document.getElementById("d2").firstChild.data=name;
      }   
  }
+
+ function reset(jsonFile) {
+  document.getElementById("reset").disabled = true;
+  document.getElementById("filter_slider_map").value = 0;
+  let mapLoaded = d3.json(jsonFile);
+  mapLoaded.then(loadMap);
+ }
