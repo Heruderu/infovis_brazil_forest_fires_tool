@@ -8,6 +8,7 @@
   <script type="text/javascript" src="barLib.js"></script>
   <script type="text/javascript" src="filter.js"></script>
   <script type="text/javascript" src="buttons.js"></script>
+  <script type="text/javascript" src="mapLib.js"></script>
   <style>
     html
     body {
@@ -19,23 +20,31 @@
       background-color: #D0D0D0;
     }
 
-    #div1 {
+    #body {
       position: absolute;
-      width: 50%;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: #D0D0D0;
+    }
+
+    #divMap {
+      position: absolute;
+      width: 49.5%;
       height: 100%;
 
-
-      background-color: #D0D0D0;
+      background-color: #FFFFFF;
     }
 
     #div2 {
       position: absolute;
       width: 50%;
-      height: 50%;
+      height: 49%;
       left: 50%;
       top: 0px;
 
-      background-color: #E9EEC3;
+      background-color: #FFFFFF;
     }
 
     #div3 {
@@ -45,7 +54,7 @@
       left: 50%;
       top: 50%;
 
-      background-color: #C4F9F4;
+      background-color: #FFFFFF;
     }
 
     .svg-container {
@@ -84,9 +93,15 @@
     }
 
     #filter_container_map {
-      position: fixed;
-      left: 1%;
-      top: 25%;
+      position: absolute;
+      left: 20px;
+      top: 200px;
+    }
+
+    #button_reset_map {
+      position: absolute;
+      left: 20px;
+      top: 275px;
     }
 
     #filter_slider_map {
@@ -167,10 +182,15 @@
 
 <body>
 
-<div id="div1" class="svg-container"></div>
+<div id="body"></div>
+<div id="divMap">
+  <div id="button_reset_map">
+    <button onclick="reset('brazilstates.json')" class="reset" id="reset" disabled>Reset</button>
+  </div>
+</div>
 <div class="filter_container" id="filter_container_map">
-  <label><input type="range" id="filter_slider_map"/> </label>
-  <p id="label_map"></p>
+  <label>Ano: <input type="range" id="filter_slider_map"/> </label>
+  <p id="label_map"> </p>
 </div>
 
 <div id="div2" onclick="setCurrentDiv2()"></div>
@@ -214,8 +234,6 @@
     }
 
     function afterLoaded() {
-
-
         let mapLoaded = d3.json("brazilstates.json");
         mapLoaded.then(loadMap);
     }
@@ -223,9 +241,6 @@
 
 
 <script type="text/javascript">
-    let margin = 75,
-        width = 1400 - margin,
-        height = 600 - margin;
 
     //data filter
     // save state of visual variables to brush and filter
@@ -242,6 +257,10 @@
     let barWidth = parseInt(ele.clientWidth) - 50;
     let countryMonthSum, countryYearSum;
 
+    let tip = d3.select("body").append("tip")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
 
     //State variables
     let currentDiv = "#div2";
@@ -253,375 +272,6 @@
     let flag = 1;
     let barData;
     let rawData;
-
-    function loadMap(brazilstates) {
-
-        let first_time = 1;
-
-        let fires_total_state = d3.map();
-
-        let svg = d3.select("#div1")
-            .classed("svg-container", true)
-            .append("svg")
-            .attr("preserveAspectRatio", "xMinYMin meet")
-            .attr("viewBox", "0 0 600 600")
-            .classed("svg-content-responsive", true)
-            .append('g')
-            .attr('class', 'map');
-
-        let projection = d3.geoMercator()
-            .center([-20, -15])
-            .scale(500)
-            .translate([width / 2, height / 2]);
-
-        let path = d3.geoPath().projection(projection);
-
-        d3.csv("new_csv.csv")
-            .then((data) => {
-                let newdata = data.map(d => {
-                    d["Número"] = +d["Número"];
-                    d["Estado"] = d["Estado"];
-                    d["Periodo"] = +d["Periodo"];
-                    d["Ano"] = +d["Ano"]
-                    return d;
-                });
-                rawData = newdata;
-                let nested = d3.nest()
-                    .key(function (d) {
-                        return d["Estado"];
-                    })
-                    .rollup(function (leaves) {
-                        let total = d3.sum(leaves, function (d) {
-                            return d["Número"];
-                        });
-
-                        return +total;
-                    })
-
-                    .entries(data);
-                fillStates(nested);
-
-                countryYearSum = getYearSum(newdata);
-                countryMonthSum = getMonthSum(newdata);
-                let ret = setupVis(countryYearSum, "#div2");//funçoes
-                let ret2 = setupVis(countryMonthSum, "#div3");
-                svgBars = ret.svg;
-                barScales = ret.scales;
-                svgBars1 = ret.svg;
-
-                svgBars2 = ret2.svg;
-
-                filteredState = newdata
-                filteredState1 = filteredState;
-                filteredState2 = countryMonthSum;
-
-
-                document.getElementById("d1").firstChild.data = "Brazil"
-                document.getElementById("d2").firstChild.data = "Brazil";
-
-                console.log(newdata)
-            })
-            .catch(err => {
-                console.log(err)
-            });
-
-        function fillStates(nested) {
-
-            console.log(nested);
-            let data_nested;
-            nested.forEach(function (d) {
-                if (d.key != "undefined") {
-                    if (d.values) {
-                        data_nested = d.values;
-                    }
-                }
-            });
-            if (data_nested)
-                nested = data_nested;
-
-            let numero_extent = d3.extent(nested, function (d) {
-                return d.value;
-            });
-
-
-            let states = topojson.feature(brazilstates, brazilstates.objects.foo);
-            let states_contour = topojson.mesh(brazilstates, brazilstates.objects.foo.geometries);
-
-            let color = d3.scaleQuantize()
-                .domain(numero_extent)
-                .range(d3.schemeReds[9]);
-
-            createLegend(numero_extent, color);
-
-            let tip = d3.select("body").append("tip")
-                .attr("class", "tooltip")
-                .style("opacity", 0);
-
-            let total = 0;
-            svg.append("g")
-                .selectAll("path")
-                .data(states.features)
-                .enter()
-                .append("path")
-                .attr("class", "state")
-                .attr("stroke", "gray")
-                .attr("fill", function (d) {
-                    let value = nested.forEach(function (n) {
-                        if (n.key != "undefined") {
-                            if (n.values) {
-                                let data_array = n.values;
-                                total = data_array.forEach(function (n) {
-                                    fires_total_state.set(n.key, n.value);
-                                    if (n.key === d.properties.codarea) {
-                                        total = n.value;
-                                    }
-                                    return color(total);
-                                })
-
-                            }
-                            fires_total_state.set(n.key, n.value);
-                            if (n.key === d.properties.codarea) {
-                                total = n.value;
-                            }
-                        }
-                    })
-                    return color(total);
-                })
-                .attr("d", path)
-                .on("mouseover", handleMouseOver)
-                .on("mouseout", handleMouseOut)
-                .on("click", function (d) { // selection scatter
-                    //console.log(d.properties.codarea)
-                    getSingleStateData(d.properties.codarea);
-
-                });
-
-
-            svg.append("g")
-                .append("path")
-                .datum(states_contour)
-                .attr("d", path)
-                .attr("class", "state_contour");
-
-            function handleMouseOver(d, i) {
-                let format = d3.format(",");
-                let label = "Estado: " + d.properties.codarea + "<br>" + "Queimadas: "
-                    + format(fires_total_state.get(d.properties.codarea));
-                tip.transition()
-                    .duration(200)
-                    .style("opacity", 1);
-                tip.html(label)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY) + "px");
-                d3.select(this).attr("stroke", "black");
-                d3.select(this).attr("stroke-width", 3);
-            }
-
-            function handleMouseOut(d, i) {
-                tip.transition()
-                    .duration(400)
-                    .style("opacity", 0);
-                d3.select(this).attr("stroke", "gray");
-                d3.select(this).attr("stroke-width", 1);
-            }
-
-            svg.append('text')
-                .attr('font-size', 20)
-                .attr('x', 35)
-                .attr('y', 30)
-                .text("VI: Trabalho de Design - Queimadas no Brasil")
-
-        }
-
-
-        //console.log(fires_total_state)
-
-        d3.csv("new_csv.csv")
-            .then((data) => {
-                let newData = data.map(d => {
-                    d["Ano"] = +d["Ano"]; //cast to float
-                    d["Numero"] = +d["Numero"]
-                    return d;
-                });
-
-                /*  countryYearSum=getYearSum(newData);
-                  countryMonthSum=getMonthSum(newData);
-                  let ret=setupVis(countryYearSum,"#div2");//funçoes
-                  let ret2=setupVis(countryMonthSum,"#div3");
-                  svgBars=ret.svg;
-                  barScales=ret.scales;
-                  svgBars1=ret.svg;
-
-                  svgBars2=ret2.svg;
-
-                  filteredState=newData
-                  filteredState1=filteredState;
-                  filteredState2=countryMonthSum;
-
-                  */
-
-
-            });
-
-
-        //filteredState=
-        //setupVis(filteredState)
-        function createLegend(numero_extent, color) {
-
-            let legendLabels = d3.range(0, numero_extent[1], numero_extent[1]/9);
-
-            if (first_time != 1) {
-                d3.selectAll('g.legendEntry').remove();
-                svg.enter();
-            }
-            let legend = svg.selectAll('g.legendEntry')
-                .data(color.range())
-                .enter()
-                .append('g').attr('class', 'legendEntry');
-
-            legend
-                .append('rect')
-                .attr("x", 20)
-                .attr("y", function (d, i) {
-                    return height - margin - i * 12;
-                })
-                .attr("width", 10)
-                .attr("height", 10)
-                .style("stroke", "black")
-                .style("stroke-width", 0.5)
-                .style("fill", function (d) {
-                    return d;
-                });
-
-            legend
-                .append('text')
-                .attr('font-size', 12)
-                .attr("x", 35) //leave 5 pixel space after the <rect>
-                .attr("y", function (d, i) {
-                    return height - margin - i * 12;
-                })
-                .attr("dy", "0.8em") //place text one line *below* the x,y point
-                .text(function (d, i) {
-                    let extent = color.invertExtent(d);
-                    console.log(extent);
-                    //extent will be a two-element array, format it however you want:
-                    let format = d3.format(".2s");
-                    if (i === 0) {
-                        return 0.0 + " < " + format(+extent[1]);
-                    }
-                    if (i === d.length + 1) {
-                        return "> " + format(+extent[0]);
-                    }
-                    return format(+extent[0]) + " - " + format(+extent[1]);
-                });
-            if (first_time == 1) {
-                console.log(first_time);
-                let year = "Anos: 1998-2017";
-                first_time = 0;
-                let label = d3.select("#label_map");
-                label.text(year);
-            }
-        }
-
-        function getSingleStateData(key) {
-
-            updateName(key);
-            countryState = updateCountryState(0);
-            filteredState = rawData.filter(d => d.Estado === key);
-            let dados;
-            if (flag == 1)
-                dados = getYearSum(filteredState);
-            else if (flag == 2)
-                dados = filteredState;
-            else if (flag == 3)
-                dados = getFilteredStatePerYearInit();
-
-
-            updateStates(filteredState);
-            // console.table(filteredState)
-            // if(barState==0){
-            updateBars(svgBars, barScales, dados);
-
-            //}
-            //else{
-            //  drawBars(svgBars, barScales, filteredState);
-            barState = 0;
-            //}
-        }
-
-        slider("#filter_slider", "#label");
-        slider("#filter_slider2", "#label2");
-        updateMapSlider("#filter_slider_map", "#label_map");
-
-        function updateMapSlider(str, str1) {
-            fires_total_state = d3.map();
-            let slider = d3.select(str);
-            let label = d3.select(str1);
-            let min = 1999
-            max = 2016
-            let dados = d3.csv("new_csv.csv")
-                .then((data) => {
-                    let newdata = data.map(d => {
-                        d["Número"] = +d["Número"];
-                        d["Estado"] = d["Estado"];
-                        d["Periodo"] = +d["Periodo"];
-                        d["Ano"] = +d["Ano"]
-                        return d;
-                    });
-                    console.log(newdata);
-                    slider
-                        .attr("min", min)
-                        .attr("max", max)
-                        .attr("value", 1)
-                        .attr("step", 1)
-                        .on("input", function input() {
-                            getMapByYear(newdata, label, this.value)
-                        });
-                })
-
-        }
-
-        function getMapByYear(data, label, year) {
-            label.text("Ano: " + year);
-            let nested = d3.nest()
-                .key(function (d) {
-                    if (d["Ano"] == year)
-                        return d["Ano"];
-                })
-                .key(function (d) {
-                    return d["Estado"];
-                })
-                .rollup(function (leaves) {
-                    let total = d3.sum(leaves, function (d) {
-                        return d["Número"];
-                    });
-
-                    return +total;
-                })
-                .entries(data);
-            fillStates(nested);
-        }
-
-        function updateStates(state) {
-            if (currentDiv == "#div2") {
-                console.log("hello")
-                filteredState1 = state;
-            } else if (currentDiv == "#div3") {
-                console.log("hello2")
-                filteredState2 = state;
-            }
-        }
-
-        function updateName(name) {
-            if (currentDiv == "#div2") {
-                document.getElementById("d1").firstChild.data = name;
-            } else if (currentDiv == "#div3") {
-                document.getElementById("d2").firstChild.data = name;
-            }
-        }
-
-
-    }
 </script>
 </body>
 </html>

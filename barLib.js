@@ -45,7 +45,7 @@
                     .attr("y", height-40)
                     .attr("width", (width - margin)/data.length)
                     .attr("height", 0)
-                    .style("fill", "#B00000")
+                    .style("fill", "#fed976")
                     .style("stroke","black")
                     .on("mouseover",function(d){    
                             console.log(d.Número);
@@ -120,11 +120,11 @@
             
         }   
         function computeYScale(data){
-            let width =barWidth;
-            height=barheight;
+            let width = barWidth;
+            let height = barheight;
             yBars = d3.scaleLinear()
                     .range([margin,height ])
                     .domain([d3.max(data, d=>+d.Número),0]);
-                    console.log(d3.max(data, d=>+d.Número))
+                    //console.log(d3.max(data, d=>+d.Número))
             return yBars;   
         }
