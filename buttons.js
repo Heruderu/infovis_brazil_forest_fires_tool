@@ -2,7 +2,7 @@ function slider(str,str1)
 {
     let slider = d3.select(str);
            let label = d3.select(str1);
-           let min = 1999 
+           let min = 1999
                max = 2016
             slider
                .attr("min", min)
