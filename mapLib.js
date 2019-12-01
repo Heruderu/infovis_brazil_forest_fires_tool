@@ -42,6 +42,7 @@ function loadMap(brazilstates) {
                 return d;
             });
             rawData = newdata;
+           
             let nested = d3.nest()
                 .key(function (d) {
                     return d["Estado"];
@@ -56,10 +57,13 @@ function loadMap(brazilstates) {
 
                 .entries(newdata);
             fillStates(nested);
-
+                
             countryYearSum = getYearSum(newdata);
-            countryMonthSum = getMonthSum(newdata);
+            countryMonthSum = getMonthSum(newdata); 
+
+           // debugger
             let ret = setupVis(countryYearSum, "#div2");//funçoes
+          
             let ret2 = setupVis(countryMonthSum, "#div3");
             svgBars = ret.svg;
             barScales = ret.scales;
@@ -67,12 +71,12 @@ function loadMap(brazilstates) {
 
             svgBars2 = ret2.svg;
 
-            filteredState = newdata
+            filteredState = newdata;
             filteredState1 = filteredState;
             filteredState2 = countryMonthSum;
 
 
-            document.getElementById("d1").firstChild.data = "Brazil"
+            document.getElementById("d1").firstChild.data = "Brazil";
             document.getElementById("d2").firstChild.data = "Brazil";
         })
         .catch(err => {
@@ -107,7 +111,7 @@ function fillStates(nested) {
         return d.value;
     });
 
-    console.log(nested);
+    //console.log(nested);
 
     let states = topojson.feature(jsonFile, jsonFile.objects.foo);
     let states_contour = topojson.mesh(jsonFile, jsonFile.objects.foo.geometries);
@@ -299,18 +303,23 @@ function getSingleStateData(key) {
     updateName(key);
     countryState = updateCountryState(0);
     filteredState = rawData.filter(d => d.Estado === key);
-    let dados;
-    if (flag == 1)
+    let flag=updateFlag();
+    console.log(flag)
+    if (flag === 1){
         dados = getYearSum(filteredState);
-    else if (flag == 2)
+    }
+        else if (flag === 2){
         dados = filteredState;
-    else if (flag == 3)
-        dados = getFilteredStatePerYearInit();
-
+        console.log("for fuck's sake")
+}else if (flag === 3){
+    console.log("Mas que caralho")
+    dados = getFilteredStatePerYearInit();
+}
 
     updateStates(filteredState);
     // console.table(filteredState)
     // if(barState==0){
+        console.log(filteredState)
     updateBars(svgBars, barScales, dados);
 
     //}
@@ -329,7 +338,16 @@ function updateStates(state) {
         filteredState2 = state;
     }
 }
-
+function updateFlag() {
+    if (currentDiv == "#div2") {
+        
+        flag=flag2;
+    } else if (currentDiv == "#div3") {
+        
+        flag=flag3;
+    }
+    return flag;
+}
 function updateName(name) {
     if (currentDiv == "#div2") {
         document.getElementById("d1").firstChild.data = name;
