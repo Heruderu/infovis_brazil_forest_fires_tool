@@ -35,13 +35,16 @@ function setCurrentDiv2()
     currentDiv= "#div2";
     filteredState=filteredState1;
     svgBars = svgBars1;
+    flag=flag2;
+    countryState=countryState1;
 }
 function setCurrentDiv3()
 {
   currentDiv= "#div3";
   filteredState=filteredState2;
   svgBars = svgBars2;
-
+  flag=flag3;
+  countryState=countryState2;
 }
 
 function action1()
@@ -60,7 +63,7 @@ function action1()
   let yBars =  computeYScale(yearSum);
   scales = {"x":xBars, "y": yBars}
   updateBars(svgBars, scales, yearSum);
-  flag=1;
+  flag2=1;
   
 }
 function action2()
@@ -77,7 +80,7 @@ function action2()
   let yBars =  computeYScale(dados);
   scales = {"x":xBars, "y": yBars}
   updateBars(svgBars, scales, dados);
-  flag=2;
+  flag2=2;
 }
 function action3()
 {
@@ -87,7 +90,7 @@ function action3()
     barState=1;
     console.log(filteredStatePerYear)
     updateBars(svgBars, barScales, filteredStatePerYear);
-    flag=3;
+    flag2=3;
 
 }
 
@@ -110,7 +113,7 @@ function action4()
   scales = {"x":xBars, "y": yBars}
   barState=1;
   updateBars(svgBars, scales, yearSum)
-  flag=1;
+  flag3=1;
 
 }
 function action5()
@@ -120,15 +123,18 @@ function action5()
   
   let dados;
   if(countryState2==1)
+  {
+    console.log(rawData)
     dados =getMonthSum(rawData);
-  else
+  }
+    else
     dados= filteredState; 
 
-  let xBars =  computeXScale(filteredState);
-  let yBars =  computeYScale(filteredState);
+  let xBars =  computeXScale(dados);
+  let yBars =  computeYScale(dados);
   scales = {"x":xBars, "y": yBars}
-  updateBars(svgBars, scales, filteredState);
-  flag=2;
+  updateBars(svgBars, scales, dados);
+  flag3=2;
 
 }
 
@@ -141,7 +147,7 @@ function action6()
     console.log(filteredStatePerYear)
     updateBars(svgBars, barScales, filteredStatePerYear);
 
-    flag=3;
+    flag3=3;
 
 }
 

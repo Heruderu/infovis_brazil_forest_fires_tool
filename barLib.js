@@ -112,7 +112,7 @@
                 
         }
         function computeXScale(data){
-            let width =barWidth;
+            let width =barWidth-margin;
             let xBars = d3.scaleLinear()
                 .rangeRound([margin, width])
                 .domain([0,d3.max(data,function(data,i){return i;})]);
