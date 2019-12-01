@@ -111,7 +111,7 @@ function fillStates(nested) {
         return d.value;
     });
 
-    console.log(nested);
+    //console.log(nested);
 
     let states = topojson.feature(jsonFile, jsonFile.objects.foo);
     let states_contour = topojson.mesh(jsonFile, jsonFile.objects.foo.geometries);
@@ -310,7 +310,7 @@ function getSingleStateData(key) {
     }
         else if (flag === 2){
         dados = filteredState;
-        console.log("for fucks' sake")
+        console.log("for fuck's sake")
 }else if (flag === 3){
     console.log("Mas que caralho")
     dados = getFilteredStatePerYearInit();
