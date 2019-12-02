@@ -12,6 +12,8 @@
   <script type="text/javascript" src="filter.js"></script>
   <script type="text/javascript" src="buttons.js"></script>
   <script type="text/javascript" src="mapLib.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <style>
     html
     body {
@@ -84,7 +86,12 @@
     #filter_slider {
       display: none;
     }
-
+    
+    .zoom_button_container{
+      position: fixed;
+      left: 57%;
+      top: 0%;
+    }
     #filter_slider2 {
       display: none;
     }
@@ -210,7 +217,13 @@
     <p id="label"></p>
   </div>
 </div>
-
+<div class="zoom_button_container">
+  <p>
+    <a href="#" onclick="rollBack1()" (svgBars) >
+      <span class="glyphicon glyphicon-zoom-in"></span>
+    </a>
+  </p>
+</div>
 <div id="div3" onclick="setCurrentDiv3()"></div>
 <div class="dropdown" id="dropdown2">
   <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2">Dropdown</button>
@@ -283,7 +296,10 @@
     //Zoom
     let brushGroup;
     let sel;
-    let previousState;
+    let previousState1,
+        tmpState1,  
+        previousState2,
+        tmpState2;
 </script>
 </body>
 </html>

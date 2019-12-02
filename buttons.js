@@ -258,3 +258,8 @@ function updateStates(state)
   let mapLoaded = d3.json(jsonFile);
   mapLoaded.then(loadMap);
  }
+
+ function rollBack1(){
+  barState=1;
+  updateBars(svgBars, [], previousState1);
+ }

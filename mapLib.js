@@ -60,10 +60,12 @@ function loadMap(brazilstates) {
                 
             countryYearSum = getYearSum(newdata);
             countryMonthSum = getMonthSum(newdata); 
-
+            previousState1=countryYearSum;
+            previousState2=countryMonthSum;    
            // debugger
             let ret = setupVis(countryYearSum, "#div2");//funçoes
           
+            flag=2;
             let ret2 = setupVis(countryMonthSum, "#div3");
             svgBars = ret.svg;
             barScales = ret.scales;
@@ -303,6 +305,17 @@ function getSingleStateData(key) {
     updateName(key);
     countryState = updateCountryState(0);
     filteredState = rawData.filter(d => d.Estado === key);
+    filteredState.forEach(function(d){
+                    d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
+                     })          
+    filteredState.sort(function(x, y){
+                    return d3.ascending(x.Order, y.Order);
+                    })
+    
+    
+
+   
+   
     let flag=updateFlag();
     console.log(flag)
     if (flag === 1){

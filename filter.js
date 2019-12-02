@@ -6,20 +6,27 @@ function getMonthSum(data) {
             
             
            .rollup(function (leaves) {
-                let tot = d3.sum(leaves, function (d) {
-                    return d.Número;
-                });
-
-                return +tot;
+                let tot = d3.sum(leaves, d=>d.Número);
+                let order= d=>d.Número
+                return {a:+tot,n:order};
                 })
 
            .entries(data)
            .map(function(sms){
             return{ Periodo: +sms.key,
-                    Número:sms.value}
-       });
-           
-        return countrySum;
+                    Número:sms.value.a,
+                    Order: (((+sms.key)%10000)*100)+Math.floor((+sms.key)/10000)
+
+                
+           }});
+           console.log(countrySum)
+          // debugger
+          countrySum.sort(function(x, y){
+            return d3.ascending(x.Order, y.Order);
+            })
+            console.log(countrySum)
+            //debugger
+            return countrySum;
        
 }
 function getYearSum(data) {
