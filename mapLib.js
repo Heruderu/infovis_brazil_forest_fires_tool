@@ -111,7 +111,7 @@ function fillStates(nested) {
         return d.value;
     });
 
-    //console.log(nested);
+    console.log(nested);
 
     let states = topojson.feature(jsonFile, jsonFile.objects.foo);
     let states_contour = topojson.mesh(jsonFile, jsonFile.objects.foo.geometries);

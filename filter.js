@@ -15,7 +15,7 @@ function getMonthSum(data) {
 
            .entries(data)
            .map(function(sms){
-            return{ Periodo: sms.key,
+            return{ Periodo: +sms.key,
                     Número:sms.value}
        });
            

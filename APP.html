@@ -3,8 +3,11 @@
 
 <head>
   <meta charset="utf-8">
-  <script src="https://d3js.org/d3.v5.js"></script>
-  <script src="https://d3js.org/topojson.v1.min.js"></script>
+   <!--<script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://d3js.org/topojson.v1.min.js"></script>-->
+   <script src="d3.js"></script>  
+   <script src="topojson.js"></script>  
+  
   <script type="text/javascript" src="barLib.js"></script>
   <script type="text/javascript" src="filter.js"></script>
   <script type="text/javascript" src="buttons.js"></script>
@@ -234,6 +237,8 @@
     }
 
     function afterLoaded() {
+
+      
         let mapLoaded = d3.json("brazilstates.json");
         mapLoaded.then(loadMap);
     }
@@ -275,6 +280,10 @@
         flag3=2;
     let barData;
     let rawData;
+    //Zoom
+    let brushGroup;
+    let sel;
+    let previousState;
 </script>
 </body>
 </html>
