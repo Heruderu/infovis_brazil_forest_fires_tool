@@ -152,33 +152,46 @@
             if(sel != null)
             {
                 let selX=[Math.floor(xBars.invert(sel[0][0])),Math.floor(xBars.invert(sel[1][0]))]
+               
+                //convert position to date and the to order "YYYYMM"
+                let selT=[xTime.invert(sel[0][0]).getFullYear()*100+xTime.invert(sel[0][0]).getMonth(),xTime.invert(sel[1][0]).getFullYear()*100+xTime.invert(sel[1][0]).getMonth()];
+                
+               // debugger
                 let selY=[yBars.invert(sel[0][1]),yBars.invert(sel[1][1])]
                 console.log("sssss")
                 
+                //filter data
                 let zoomed= data.filter((d,i)=> i>=selX[0] && i<=selX[1] )
+                let filteredMapData=rawData.filter((d,i)=> d.Order>=selT[0] && d.Order<=selT[1] )
+                console.log("caralho21")
+                console.log(selT[0],selT[1],filteredMapData,rawData)
+
+
                 console.log(zoomed)
+                //attempt to destroy the brush... and fail miserably
                 svgBars.selectAll("g.brush").remove();    
 
 
 
 
-/*
+
                 let nested = d3.nest()
-                .key(function (d) {
-                    return d["Periodo"];
-                })
-                .rollup(function (leaves) {
-                    let total = d3.sum(leaves, function (d) {
-                        return d["Número"];
-                    });
+                        .key(function (d) {
+                            return d["Estado"];
+                        })
+                        .rollup(function (leaves) {
+                            let total = d3.sum(leaves, function (d) {
+                                return d["Número"];
+                            });
 
-                    return +total;
-                })
-
-                .entries(zoomed);
+                            return +total;
+                        })
+                         .entries(filteredMapData);
+                       
+                         console.log("caralho2")
+                         console.log(nested)
                 fillStates(nested);
-  */                 
-                    return drawBars(svgBars,[],zoomed)
+                 return drawBars(svgBars,[],zoomed)
             }
         }
                 

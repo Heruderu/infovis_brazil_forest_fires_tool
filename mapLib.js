@@ -41,7 +41,15 @@ function loadMap(brazilstates) {
                 d["Ano"] = +d["Ano"]
                 return d;
             });
+            //Save initial dataset sorted by chronologica order
             rawData = newdata;
+            rawData.forEach(function(d){
+                d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
+                 })          
+            rawData.sort(function(x, y){
+                return d3.ascending(x.Order, y.Order);
+                })
+
            
             let nested = d3.nest()
                 .key(function (d) {
@@ -56,8 +64,12 @@ function loadMap(brazilstates) {
                 })
 
                 .entries(newdata);
+                console.log("caralho1")
+                console.log(nested)
             fillStates(nested);
-                
+             
+            
+
             countryYearSum = getYearSum(newdata);
             countryMonthSum = getMonthSum(newdata); 
             previousState1=countryYearSum;
@@ -85,15 +97,6 @@ function loadMap(brazilstates) {
             console.log(err)
         });
 
-    d3.csv("new_csv.csv")
-        .then((data) => {
-            let newData = data.map(d => {
-                d["Ano"] = +d["Ano"]; //cast to float
-                d["Numero"] = +d["Numero"]
-                return d;
-            });
-
-        });    
 
 }
 
@@ -305,12 +308,12 @@ function getSingleStateData(key) {
     updateName(key);
     countryState = updateCountryState(0);
     filteredState = rawData.filter(d => d.Estado === key);
-    filteredState.forEach(function(d){
-                    d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
-                     })          
-    filteredState.sort(function(x, y){
-                    return d3.ascending(x.Order, y.Order);
-                    })
+    //filteredState.forEach(function(d){
+      //              d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
+        //             })          
+    //filteredState.sort(function(x, y){
+      //              return d3.ascending(x.Order, y.Order);
+        //            })
     
     
 
