@@ -5,6 +5,7 @@
             
                 // scatterplot setup
             let svgBars = d3.select(str).append("svg")
+                .attr("class",str)
                 .attr("width", width)
                 .attr("height", height);
             let xBars =  computeXScale(data);
@@ -26,10 +27,22 @@
                     .attr("transform", "translate("+margin+" ,-40)")
                     .call(y_axis);
 
+           
+           //brushGroup=svgBars.join("g")
+             //       .attr("class", "brush");
+           
+            if(str=="#div2")
+                svgBars1=svgBars;
+            else if(str=="#div3")
+                svgBars2=svgBars;
+            
             drawBars(svgBars, barScales, data);
-            ret={"svg":svgBars, "scales":barScales }
+           
+           
+           
+            ret={"svg":svgBars, "scales":barScales}
             return ret;
-
+           
 
         }
         function updateMemory(data)
@@ -64,6 +77,8 @@
         }
 */
        svgBars.selectAll("*").remove();
+       
+       
        //d3.selectAll("g.brush").call(brush.clear());
            
        let  x_axis = d3.axisBottom(xBars)
@@ -137,31 +152,44 @@
 
 
 
-
+         
         
         brushGroup=svgBars.join("g")
                     .attr("class", "brush")
                     .call(brush);
+            if(svgBars===svgBars1){
+             console.log("HEYA")
+                brushGroup1=brushGroup;
+
+            }else if(svgBars===svgBars2){
+                console.log("HEYO")
+                brushGroup2=brushGroup;
+            }
 
 
         function brushed() {
             // console.log( d3.event.selection );
             if (!d3.event.sourceEvent) return;
                 
+            if(svgBars===svgBars1)
+                 setCurrentDiv2()
+            else 
+                 setCurrentDiv3()
+            
             sel = d3.event.selection;
             if(sel != null)
             {
-                let selX=[Math.floor(xBars.invert(sel[0][0])),Math.floor(xBars.invert(sel[1][0]))]
+                selX=[Math.floor(xBars.invert(sel[0][0])),Math.floor(xBars.invert(sel[1][0]))]
                
                 //convert position to date and the to order "YYYYMM"
-                let selT=[xTime.invert(sel[0][0]).getFullYear()*100+xTime.invert(sel[0][0]).getMonth(),xTime.invert(sel[1][0]).getFullYear()*100+xTime.invert(sel[1][0]).getMonth()];
+                selT=[xTime.invert(sel[0][0]).getFullYear()*100+xTime.invert(sel[0][0]).getMonth(),xTime.invert(sel[1][0]).getFullYear()*100+xTime.invert(sel[1][0]).getMonth()];
                 
                // debugger
                 let selY=[yBars.invert(sel[0][1]),yBars.invert(sel[1][1])]
                 console.log("sssss")
                 
                 //filter data
-                let zoomed= data.filter((d,i)=> i>=selX[0] && i<=selX[1] )
+                zoomed= data.filter((d,i)=> i>=selX[0] && i<=selX[1] )
                 let filteredMapData=rawData.filter((d,i)=> d.Order>=selT[0] && d.Order<=selT[1] )
                 console.log("caralho21")
                 console.log(selT[0],selT[1],filteredMapData,rawData)
@@ -170,28 +198,35 @@
                 console.log(zoomed)
                 //attempt to destroy the brush... and fail miserably
                 svgBars.selectAll("g.brush").remove();    
+                brushGroup.call(brush.move, null);
+                //brushGroup.remove();
 
 
 
+                    
+                if(brushFlag==1)
+                {
+                    let nested = d3.nest()
+                            .key(function (d) {
+                                return d["Estado"];
+                            })
+                            .rollup(function (leaves) {
+                                let total = d3.sum(leaves, function (d) {
+                                    return d["Número"];
+                                });
 
-
-                let nested = d3.nest()
-                        .key(function (d) {
-                            return d["Estado"];
-                        })
-                        .rollup(function (leaves) {
-                            let total = d3.sum(leaves, function (d) {
-                                return d["Número"];
-                            });
-
-                            return +total;
-                        })
-                         .entries(filteredMapData);
-                       
-                         console.log("caralho2")
-                         console.log(nested)
-                fillStates(nested);
-                 return drawBars(svgBars,[],zoomed)
+                                return +total;
+                            })
+                            .entries(filteredMapData);
+                        
+                            console.log("caralho2")
+                            console.log(nested)
+                
+                    fillStates(nested);
+                }else if(zoomFlag==1)
+                {
+                    drawBars(svgBars,[],zoomed)
+                }
             }
         }
                 
@@ -295,9 +330,13 @@
         function computeYScale(data){
             let width = barWidth;
             let height = barheight;
+            let Ydomain;
+
+            Ydomain=[d3.max(data, d=>+d.Número),0]
+
             yBars = d3.scaleLinear()
                     .range([margin,height ])
-                    .domain([d3.max(data, d=>+d.Número),0]);
+                    .domain(Ydomain);
                     //console.log(d3.max(data, d=>+d.Número))
             return yBars;   
         }

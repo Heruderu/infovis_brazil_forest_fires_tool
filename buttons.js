@@ -3,13 +3,19 @@ function slider(str,str1)
     let slider = d3.select(str);
            let label = d3.select(str1);
            let min = 1999
-               max = 2016
+               max = 2017
             slider
                .attr("min", min)
                .attr("max", max)
                .attr("value", 1)
                .attr("step", 1)
                .on("input", function(d) {
+
+                  if(str=="#filter_slider")
+                      setCurrentDiv2();
+                  else
+                      setCurrentDiv3();
+                      
                    label.text(this.value); // use `this` on the place of slider
                    //console.log(this.value)
                    let filteredStatePerYear;
@@ -26,7 +32,7 @@ function slider(str,str1)
                       filteredStatePerYear= dados.filter(d=> d.Ano===+this.value);
                      }
                   
-                        barState=1;
+                        barState=0;
                        updateBars(svgBars, barScales, filteredStatePerYear);
                })        
 }
@@ -37,6 +43,9 @@ function setCurrentDiv2()
     svgBars = svgBars1;
     flag=flag2;
     countryState=countryState1;
+    brushFlag=brushFlag1;
+    zoomFlag=zoomFlag1;
+    brushGroup=brushGroup1;
 }
 function setCurrentDiv3()
 {
@@ -45,12 +54,15 @@ function setCurrentDiv3()
   svgBars = svgBars2;
   flag=flag3;
   countryState=countryState2;
+  brushFlag=brushFlag2;
+  zoomFlag=zoomFlag2;
+  brushGroup=brushGroup2;
 }
 
 function action1()
 {
   document.getElementById("filter_slider").style.display = 'none';
-  
+
   let dados;
   if(countryState1==1)
     dados =rawData;
@@ -70,6 +82,7 @@ function action1()
 function action2()
 {
   document.getElementById("filter_slider").style.display = 'none';
+  
   barState=1;
   flag2=2;
   let dados;
@@ -87,6 +100,7 @@ function action2()
 function action3()
 {
   document.getElementById("filter_slider").style.display = 'inline';
+
     countryState=countryState1;
     let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
@@ -101,6 +115,7 @@ function action3()
 function action4()
 {
   document.getElementById("filter_slider2").style.display = 'none';
+
 
   barState=1;
   flag3=1;
@@ -123,6 +138,7 @@ function action4()
 function action5()
 {
   document.getElementById("filter_slider2").style.display = 'none';
+
   barState=1;
   flag3=2;
   let dados;
@@ -145,6 +161,7 @@ function action5()
 function action6()
 {
   document.getElementById("filter_slider2").style.display = 'inline';
+
   countryState=countryState2;
   let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
@@ -263,3 +280,23 @@ function updateStates(state)
   barState=1;
   updateBars(svgBars, [], previousState1);
  }
+ function zoom(){
+    zoomFlag1=1;
+    brushFlag1=0;
+
+ }
+ function zoom2(){
+  zoomFlag2=1;
+  brushFlag2=0;
+
+}
+ function brush2Map(){
+  brushFlag1=1;
+  zoomFlag1=0;
+
+}
+function brush2Map2(){
+  brushFlag2=1;
+  zoomFlag2=0;
+
+}

@@ -12,8 +12,14 @@
   <script type="text/javascript" src="filter.js"></script>
   <script type="text/javascript" src="buttons.js"></script>
   <script type="text/javascript" src="mapLib.js"></script>
+  
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+  
   <style>
     html
     body {
@@ -79,8 +85,8 @@
 
     #filter_container1 {
       position: fixed;
-      left: 57%;
-      top: 0%;
+      left: 63%;
+      top: 5px;
     }
 
     #filter_slider {
@@ -90,15 +96,35 @@
     .zoom_button_container{
       position: fixed;
       left: 57%;
-      top: 0%;
+      top: -10px;
+      transform:scale(1.7);
     }
+    .brush_button_container{
+    position: fixed;
+      left: 60%;
+      top: -10px;
+      transform:scale(1.7);
+      }
+
+      .zoom_button_container2{
+      position: fixed;
+      left: 57%;
+      top: 50%;
+      transform:scale(1.7);
+    }
+    .brush_button_container2{
+    position: fixed;
+      left: 60%;
+      top: 50%;
+      transform:scale(1.7);
+      }
     #filter_slider2 {
       display: none;
     }
 
     #filter_container2 {
       position: fixed;
-      left: 57%;
+      left: 63%;
       top: 50%;
     }
 
@@ -203,7 +229,7 @@
   <p id="label_map"> </p>
 </div>
 
-<div id="div2" onclick="setCurrentDiv2()"></div>
+<div id="div2" onclick="setCurrentDiv2()" ondblclick="rollBack1()"></div>
 <div class="dropdown" id="dropdown1">
   <button onclick="myFunction('myDropdown1')" class="dropbtn" id="d1">Dropdown</button>
   <div id="myDropdown1" class="dropdown-content">
@@ -219,11 +245,20 @@
 </div>
 <div class="zoom_button_container">
   <p>
-    <a href="#" onclick="rollBack1()" (svgBars) >
-      <span class="glyphicon glyphicon-zoom-in"></span>
+    <a href="#" onclick="zoom()" (svgBars) >
+      <i class="fa fa-search"></i>
     </a>
   </p>
 </div>
+<div class="brush_button_container" >
+  <p>
+    <a  href="#" onclick="brush2Map()" (svgBars) >
+        <i class="fa fa-arrow-left"></i>
+    </a>
+  </p>
+</div>
+
+
 <div id="div3" onclick="setCurrentDiv3()"></div>
 <div class="dropdown" id="dropdown2">
   <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2">Dropdown</button>
@@ -240,6 +275,21 @@
     <p id="label2"></p>
   </div>
 </div>
+<div class="zoom_button_container2">
+  <p>
+    <a href="#" onclick="zoom2()" (svgBars) >
+      <i class="fa fa-search"></i>
+    </a>
+  </p>
+</div>
+<div class="brush_button_container2" >
+  <p>
+    <a  href="#" onclick="brush2Map2()" (svgBars) >
+        <i class="fa fa-arrow-left"></i>
+    </a>
+  </p>
+</div>
+
 
 <script type="text/javascript">
     if (document.readyState === 'loading') {
@@ -294,12 +344,32 @@
     let barData;
     let rawData;
     //Zoom
-    let brushGroup;
+    let brushGroup,
+        brushGroup1,
+        brushGroup2;
     let sel;
+    let zoomed;
+    let selX,
+        selT;
     let previousState1,
         tmpState1,  
         previousState2,
         tmpState2;
+    let zoomFlag=0,
+        zoomFlag1=0,
+        zoomFlag2=0; //zoom hasn't happenned
+    let brushFlag=0,
+        brushFlag1=0,
+        brushFlag2=0;
+    function showFlags(){
+      console.log("countryState",countryState,"flag",flag,"flag2",flag2,"flag3",flag3,"zoomFlag",zoomFlag,"brushFlag",brushFlag )
+    }
 </script>
-</body>
+</,
+    }
+</script>
+</,
+2    }
+2</scri3pt>
+</3,"zoomFlag",zoomFlag,"brushFlag",brushFlagbody>
 </html>

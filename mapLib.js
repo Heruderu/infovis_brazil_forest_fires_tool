@@ -82,9 +82,9 @@ function loadMap(brazilstates) {
             svgBars = ret.svg;
             barScales = ret.scales;
             svgBars1 = ret.svg;
-
+            
             svgBars2 = ret2.svg;
-
+            
             filteredState = newdata;
             filteredState1 = filteredState;
             filteredState2 = countryMonthSum;
@@ -308,6 +308,9 @@ function getSingleStateData(key) {
     updateName(key);
     countryState = updateCountryState(0);
     filteredState = rawData.filter(d => d.Estado === key);
+
+
+    
     //filteredState.forEach(function(d){
       //              d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
         //             })          
@@ -324,18 +327,22 @@ function getSingleStateData(key) {
     if (flag === 1){
         dados = getYearSum(filteredState);
     }
-        else if (flag === 2){
+    else if (flag === 2){
         dados = filteredState;
         console.log("for fuck's sake")
-}else if (flag === 3){
-    console.log("Mas que caralho")
-    dados = getFilteredStatePerYearInit();
-}
+    }else if (flag === 3){
+        console.log("Mas que caralho")
+        dados = getFilteredStatePerYearInit();
+    }
 
+  
+
+   
     updateStates(filteredState);
     // console.table(filteredState)
     // if(barState==0){
         console.log(filteredState)
+    barState = 1;
     updateBars(svgBars, barScales, dados);
 
     //}
