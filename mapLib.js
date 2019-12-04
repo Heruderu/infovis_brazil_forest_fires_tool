@@ -74,11 +74,17 @@ function loadMap(brazilstates) {
             countryMonthSum = getMonthSum(newdata); 
             previousState1=countryYearSum;
             previousState2=countryMonthSum;    
+           
            // debugger
+           // currentDiv="#div2";
             let ret = setupVis(countryYearSum, "#div2");//funçoes
           
             flag=2;
+           // currentDiv="#div3";
             let ret2 = setupVis(countryMonthSum, "#div3");
+            tmpState1= previousState1;
+            tmpState2= previousState2;
+           
             svgBars = ret.svg;
             barScales = ret.scales;
             svgBars1 = ret.svg;

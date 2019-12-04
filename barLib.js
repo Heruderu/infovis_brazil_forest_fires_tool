@@ -54,6 +54,8 @@
             {    
                 previousState1=tmpState1;
                 tmpState1=data;
+                flag2=previousFlag1;
+                console.log("HELLOHELLO")
                 
                 
             }
@@ -61,7 +63,8 @@
             {
                 previousState2=tmpState2;
                 tmpState2=data;
-                
+                flag3=previousFlag2;
+                console.log("ELAELA")
             }   
         }
        function drawBars(svgBars, scales, data){

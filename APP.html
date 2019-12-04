@@ -85,7 +85,7 @@
 
     #filter_container1 {
       position: fixed;
-      left: 63%;
+      left: 66%;
       top: 5px;
     }
 
@@ -105,17 +105,29 @@
       top: -10px;
       transform:scale(1.7);
       }
-
-      .zoom_button_container2{
+    .undo_button_container{
+      position: fixed;
+      left: 63%;
+      top: -10px;
+      transform:scale(1.7);
+      }
+      
+    .zoom_button_container2{
       position: fixed;
       left: 57%;
-      top: 50%;
+      top: 49%;
       transform:scale(1.7);
     }
     .brush_button_container2{
     position: fixed;
       left: 60%;
-      top: 50%;
+      top: 49%;
+      transform:scale(1.7);
+      }
+    .undo_button_container2{
+      position: fixed;
+      left: 63%;
+      top: 49%;
       transform:scale(1.7);
       }
     #filter_slider2 {
@@ -124,8 +136,8 @@
 
     #filter_container2 {
       position: fixed;
-      left: 63%;
-      top: 50%;
+      left: 66%;
+      top: 51%;
     }
 
     #filter_container_map {
@@ -246,7 +258,7 @@
 <div class="zoom_button_container">
   <p>
     <a href="#" onclick="zoom()" (svgBars) >
-      <i class="fa fa-search"></i>
+      <i class="fa fa-search-plus"></i>
     </a>
   </p>
 </div>
@@ -258,8 +270,16 @@
   </p>
 </div>
 
+<div class="undo_button_container" >
+  <p>
+    <a  href="#" onclick="rollBack1()" (svgBars) >
+        <i class="fa fa-undo"></i>
+    </a>
+  </p>
+</div>
 
-<div id="div3" onclick="setCurrentDiv3()"></div>
+
+<div id="div3" onclick="setCurrentDiv3()" ondblclick="rollBack2()"></div>
 <div class="dropdown" id="dropdown2">
   <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2">Dropdown</button>
   <div id="myDropdown2" class="dropdown-content1">
@@ -278,7 +298,7 @@
 <div class="zoom_button_container2">
   <p>
     <a href="#" onclick="zoom2()" (svgBars) >
-      <i class="fa fa-search"></i>
+      <i class="fa fa-search-plus"></i>
     </a>
   </p>
 </div>
@@ -286,6 +306,13 @@
   <p>
     <a  href="#" onclick="brush2Map2()" (svgBars) >
         <i class="fa fa-arrow-left"></i>
+    </a>
+  </p>
+</div>
+<div class="undo_button_container2" >
+  <p>
+    <a  href="#" onclick="rollBack2()" (svgBars) >
+        <i class="fa fa-undo"></i>
     </a>
   </p>
 </div>
@@ -357,6 +384,12 @@
         tmpState2;
      let previousName1="Brazil",
          previousName2="Brazil";
+     let previousFlag1=1,
+         previousFlag2=2;
+     let prevSlider1=0,
+        tmpSlider1=0,
+        prevSlider2=0;
+        tmpSlider2=0;
     let zoomFlag=0,
         zoomFlag1=0,
         zoomFlag2=0; //zoom hasn't happenned

@@ -11,10 +11,17 @@ function slider(str,str1)
                .attr("step", 1)
                .on("input", function(d) {
 
-                  if(str=="#filter_slider")
+                
+                  if(str=="#filter_slider"){
                       setCurrentDiv2();
-                  else
+                      prevSlider1=tmpSlider1;
+                      tmpSlider1=this.value;
+                  }
+                  else{
                       setCurrentDiv3();
+                      prevSlider2=tmpSlider2;
+                      tmpSlider2=this.value;
+                  }
 
                    label.text(this.value); // use `this` on the place of slider
                    //console.log(this.value)
@@ -32,7 +39,7 @@ function slider(str,str1)
                       filteredStatePerYear= dados.filter(d=> d.Ano===+this.value);
                      }
                   
-                        barState=0;
+                        barState=1;
                        updateBars(svgBars, barScales, filteredStatePerYear);
                })        
 }
@@ -62,7 +69,7 @@ function setCurrentDiv3()
 function action1()
 {
   document.getElementById("filter_slider").style.display = 'none';
-
+  d3.select("#label").text("");
   let dados;
   if(countryState1==1)
     dados =rawData;
@@ -84,10 +91,11 @@ function action1()
 function action2()
 {
   document.getElementById("filter_slider").style.display = 'none';
-  
+  d3.select("#label").text("")
   barState=1;
   previousFlag1=flag2;
   flag2=2;
+  
   let dados;
   if(countryState1==1)
     dados =getMonthSum(rawData);
@@ -105,7 +113,7 @@ function action2()
 function action3()
 {
   document.getElementById("filter_slider").style.display = 'inline';
-
+  d3.select("#label").text("")
     countryState=countryState1;
     let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
@@ -122,7 +130,7 @@ function action3()
 function action4()
 {
   document.getElementById("filter_slider2").style.display = 'none';
-
+  d3.select("#label2").text("")
 
   barState=1;
   previousFlag2=flag3;
@@ -146,10 +154,11 @@ function action4()
 function action5()
 {
   document.getElementById("filter_slider2").style.display = 'none';
-
+  d3.select("#label2").text("")
   barState=1;
-  flag3=2;
   previousFlag2=flag3;
+  flag3=2;
+
   let dados;
   if(countryState2==1)
   {
@@ -171,12 +180,14 @@ function action5()
 function action6()
 {
   document.getElementById("filter_slider2").style.display = 'inline';
-
+  d3.select("#label2").text("")
+  
   countryState=countryState2;
   let filteredStatePerYear=getFilteredStatePerYearInit()
-    barState=1;previousFlag1
-    flag3=3;
+    barState=1;
     previousFlag2=flag3;
+    flag3=3;
+
     console.log(filteredStatePerYear)
     saveName();
     updateBars(svgBars, barScales, filteredStatePerYear);
@@ -280,7 +291,22 @@ function updateStates(state)
          document.getElementById("d2").firstChild.data=name;
      }   
  }
+function updateSlider(prevSlider){
+  if (currentDiv=="#div2")
+  {   
+    if(prevSlider!=0) 
+      d3.select( "#label").text(prevSlider);
+    document.getElementById("filter_slider").value=prevSlider;
+      
+  }
+  else if(currentDiv=="#div3")
+  {
+    if(prevSlider!=0)
+      d3.select( "#label2").text(prevSlider);
+    document.getElementById("filter_slider2").value=prevSlider;
+  }   
 
+}
  function reset(jsonFile) {
   document.getElementById("reset").disabled = true;
   document.getElementById("filter_slider_map").value = 0;
@@ -291,11 +317,13 @@ function updateStates(state)
  function rollBack1(){
   barState=1;
   updateName(previousName1);
+  updateSlider(prevSlider1)
   updateBars(svgBars1, [], previousState1);
  }
  function rollBack2(){
   barState=1;
   updateName(previousName2);
+  updateSlider(prevSlider2)
   updateBars(svgBars2, [], previousState2);
  }
  function zoom(){
