@@ -305,22 +305,11 @@ function getMapByYear(data, label, year) {
 
 function getSingleStateData(key) {
 
+
+
     updateName(key);
     countryState = updateCountryState(0);
-    filteredState = rawData.filter(d => d.Estado === key);
-
-
-    
-    //filteredState.forEach(function(d){
-      //              d.Order=(((d.Periodo)%10000)*100)+Math.floor((d.Periodo)/10000)
-        //             })          
-    //filteredState.sort(function(x, y){
-      //              return d3.ascending(x.Order, y.Order);
-        //            })
-    
-    
-
-   
+    filteredState = rawData.filter(d => d.Estado === key);   
    
     let flag=updateFlag();
     console.log(flag)
@@ -372,9 +361,24 @@ function updateFlag() {
     return flag;
 }
 function updateName(name) {
+    
     if (currentDiv == "#div2") {
+        previousName1=document.getElementById("d1").firstChild.data
         document.getElementById("d1").firstChild.data = name;
     } else if (currentDiv == "#div3") {
+        previousName2=document.getElementById("d2").firstChild.data
         document.getElementById("d2").firstChild.data = name;
     }
+}
+function saveName(){
+
+    if (currentDiv == "#div2") {
+        previousName1=document.getElementById("d1").firstChild.data
+        
+    } else if (currentDiv == "#div3") {
+        previousName2=document.getElementById("d2").firstChild.data
+        
+    }
+
+
 }

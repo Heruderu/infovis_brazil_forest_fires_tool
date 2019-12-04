@@ -15,7 +15,7 @@ function slider(str,str1)
                       setCurrentDiv2();
                   else
                       setCurrentDiv3();
-                      
+
                    label.text(this.value); // use `this` on the place of slider
                    //console.log(this.value)
                    let filteredStatePerYear;
@@ -70,11 +70,13 @@ function action1()
     dados= filteredState; 
   
   barState=1;
+  previousFlag1=flag2;
   flag2=1;
   let yearSum=getYearSum(dados)
   let xBars =  computeXScale(yearSum);
   let yBars =  computeYScale(yearSum);
   scales = {"x":xBars, "y": yBars}
+  saveName();
   updateBars(svgBars, scales, yearSum);
   
   
@@ -84,6 +86,7 @@ function action2()
   document.getElementById("filter_slider").style.display = 'none';
   
   barState=1;
+  previousFlag1=flag2;
   flag2=2;
   let dados;
   if(countryState1==1)
@@ -94,6 +97,8 @@ function action2()
   let xBars =  computeXScale(dados);
   let yBars =  computeYScale(dados);
   scales = {"x":xBars, "y": yBars}
+  saveName();
+
   updateBars(svgBars, scales, dados);
   
 }
@@ -104,8 +109,10 @@ function action3()
     countryState=countryState1;
     let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
+    previousFlag1=flag2;
     flag2=3;
     console.log(filteredStatePerYear)
+    saveName();
     updateBars(svgBars, barScales, filteredStatePerYear);
     
 
@@ -118,6 +125,7 @@ function action4()
 
 
   barState=1;
+  previousFlag2=flag3;
   flag3=1;
   let dados;
   if(countryState2==1)
@@ -130,7 +138,7 @@ function action4()
   let xBars =  computeXScale(yearSum);
   let yBars =  computeYScale(yearSum);
   scales = {"x":xBars, "y": yBars}
-  
+  saveName();
   updateBars(svgBars, scales, yearSum)
   
 
@@ -141,6 +149,7 @@ function action5()
 
   barState=1;
   flag3=2;
+  previousFlag2=flag3;
   let dados;
   if(countryState2==1)
   {
@@ -153,6 +162,7 @@ function action5()
   let xBars =  computeXScale(dados);
   let yBars =  computeYScale(dados);
   scales = {"x":xBars, "y": yBars}
+  saveName();
   updateBars(svgBars, scales, dados);
   
 
@@ -164,9 +174,11 @@ function action6()
 
   countryState=countryState2;
   let filteredStatePerYear=getFilteredStatePerYearInit()
-    barState=1;
+    barState=1;previousFlag1
     flag3=3;
+    previousFlag2=flag3;
     console.log(filteredStatePerYear)
+    saveName();
     updateBars(svgBars, barScales, filteredStatePerYear);
 
     
@@ -278,7 +290,13 @@ function updateStates(state)
 
  function rollBack1(){
   barState=1;
-  updateBars(svgBars, [], previousState1);
+  updateName(previousName1);
+  updateBars(svgBars1, [], previousState1);
+ }
+ function rollBack2(){
+  barState=1;
+  updateName(previousName2);
+  updateBars(svgBars2, [], previousState2);
  }
  function zoom(){
     zoomFlag1=1;

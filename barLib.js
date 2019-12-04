@@ -47,17 +47,21 @@
         }
         function updateMemory(data)
         {
-            
+           
+                
 
             if (currentDiv=="#div2")
             {    
                 previousState1=tmpState1;
                 tmpState1=data;
+                
+                
             }
             else if(currentDiv=="#div3")
             {
                 previousState2=tmpState2;
                 tmpState2=data;
+                
             }   
         }
        function drawBars(svgBars, scales, data){
@@ -67,6 +71,7 @@
         let yBars = computeYScale(data);
         updateFlag();
         updateMemory(data);
+        
         let brush=d3.brush().on("end",brushed);
 
       
@@ -225,11 +230,12 @@
                     fillStates(nested);
                 }else if(zoomFlag==1)
                 {
-                    drawBars(svgBars,[],zoomed)
+                    saveName();
+                   drawBars(svgBars,[],zoomed)
                 }
             }
         }
-                
+       
            
         }    
 
