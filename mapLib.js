@@ -69,8 +69,7 @@ function loadMap(brazilstates) {
                 })
 
                 .entries(newdata);
-                console.log("caralho1")
-                console.log(nested)
+                
             fillStates(nested);
              
             
@@ -80,12 +79,10 @@ function loadMap(brazilstates) {
             previousState1=countryYearSum;
             previousState2=countryMonthSum;    
            
-           // debugger
-           // currentDiv="#div2";
+         
             let ret = setupVis(countryYearSum, "#div2");//funçoes
           
             flag=2;
-           // currentDiv="#div3";
             let ret2 = setupVis(countryMonthSum, "#div3");
             tmpState1= previousState1;
             tmpState2= previousState2;
@@ -101,8 +98,8 @@ function loadMap(brazilstates) {
             filteredState2 = countryMonthSum;
 
 
-            document.getElementById("d1").firstChild.data = "Brazil";
-            document.getElementById("d2").firstChild.data = "Brazil";
+            document.getElementById("t1").firstChild.data = "Brazil";
+            document.getElementById("t2").firstChild.data = "Brazil";
         })
         .catch(err => {
             console.log(err)
@@ -299,9 +296,9 @@ function getSingleStateData(key) {
     }
     else if (flag === 2){
         dados = filteredState;
-        console.log("for fuck's sake")
+ 
     }else if (flag === 3){
-        console.log("Mas que caralho")
+
         dados = getFilteredStatePerYearInit();
     }
 
@@ -309,25 +306,19 @@ function getSingleStateData(key) {
 
    
     updateStates(filteredState);
-    // console.table(filteredState)
-    // if(barState==0){
-        console.log(filteredState)
+   
     barState = 1;
     updateBars(svgBars, barScales, dados);
 
-    //}
-    //else{
-    //  drawBars(svgBars, barScales, filteredState);
     barState = 0;
-    //}
+
 }
 
 function updateStates(state) {
     if (currentDiv == "#div2") {
-        console.log("hello")
+   
         filteredState1 = state;
     } else if (currentDiv == "#div3") {
-        console.log("hello2")
         filteredState2 = state;
     }
 }
@@ -344,20 +335,20 @@ function updateFlag() {
 function updateName(name) {
     
     if (currentDiv == "#div2") {
-        previousName1=document.getElementById("d1").firstChild.data
-        document.getElementById("d1").firstChild.data = name;
+        previousName1=document.getElementById("t1").firstChild.data
+        document.getElementById("t1").firstChild.data = name;
     } else if (currentDiv == "#div3") {
-        previousName2=document.getElementById("d2").firstChild.data
-        document.getElementById("d2").firstChild.data = name;
+        previousName2=document.getElementById("t2").firstChild.data
+        document.getElementById("t2").firstChild.data = name;
     }
 }
 function saveName(){
 
     if (currentDiv == "#div2") {
-        previousName1=document.getElementById("d1").firstChild.data
+        previousName1=document.getElementById("t1").firstChild.data
         
     } else if (currentDiv == "#div3") {
-        previousName2=document.getElementById("d2").firstChild.data
+        previousName2=document.getElementById("t2").firstChild.data
         
     }
 
