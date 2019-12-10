@@ -67,6 +67,24 @@
 
       background-color: #FFFFFF;
     }
+    #title1 {
+      position: absolute;
+      width: 10%;
+      height: 2%;
+      left: 85%;
+      top: -7px;
+
+      background-color: #FFFFFF;
+    }
+    #title2 {
+      position: absolute;
+      width: 10%;
+      height: 2%;
+      left: 85%;
+      top: 50%;
+
+      background-color: #FFFFFF;
+    }
 
     .svg-container {
       display: inline-block;
@@ -111,7 +129,12 @@
       top: -10px;
       transform:scale(1.7);
       }
-      
+    .brazil_button_container{
+      position: fixed;
+      left: 90%;
+      top: -13px;
+      transform:scale(1.1);
+      }
     .zoom_button_container2{
       position: fixed;
       left: 57%;
@@ -129,6 +152,12 @@
       left: 63%;
       top: 49%;
       transform:scale(1.7);
+      }
+      .brazil_button_container2{
+      position: fixed;
+      left: 90%;
+      top: 48.5%;
+      transform:scale(1.1);
       }
     #filter_slider2 {
       display: none;
@@ -156,6 +185,14 @@
       display: inline;
       color: black;
     }
+    #dropdown0 {
+      position: fixed;
+      left: 2%;
+      top: 14%;
+      transform:scale(1.2); 
+      display: inline-block;
+    }
+
 
     #dropdown1 {
       position: fixed;
@@ -171,6 +208,15 @@
       display: inline-block;
     }
 
+    .dropdown-content0 {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      overflow: auto;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
     .dropdown-content {
       display: none;
       position: absolute;
@@ -204,6 +250,12 @@
       text-decoration: none;
       display: block;
     }
+    .dropdown-content0 a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
 
     .dropdown a:hover {
       background-color: rgb(141, 135, 135);
@@ -223,6 +275,8 @@
       background: #242424;
       pointer-events: none;
     }
+
+    .fa:hover{color:teal;}
   </style>
 
 
@@ -240,15 +294,29 @@
   <label>Ano: <input type="range" id="filter_slider_map"/> </label>
   <p id="label_map"> </p>
 </div>
+<div class="dropdown" id="dropdown0">
+  <p class="buttonLegend" style="font-size:10px; margin-top:0; margin-bottom:0; " >Selected Panel </p>
+  <button onclick="myFunction0('myDropdown0')" class="dropbtn0" id="d0" data-toggle="tooltip" title="Change panel &#013You can also click on the desired panel ">Top Panel</button>
+  <div id="myDropdown0" class="dropdown-content0">
+    <a href="#top" onclick="setCurrentDiv2()">Top Panel</a>
+    <a href="#bot" onclick="setCurrentDiv3()">Bottom Panel</a>
+  </div>
+</div>
+
+
 
 <div id="div2" onclick="setCurrentDiv2()" ondblclick="rollBack1()"></div>
-<div class="dropdown" id="dropdown1">
-  <button onclick="myFunction('myDropdown1')" class="dropbtn" id="d1">Dropdown</button>
+<div id="title1">
+  <p style="font-size:10px ;" >Selected Area: </p>
+  <p id="t1" style="line-height: 0;"> Brazil<p>
+</div>
+<div class="dropdown" id="dropdown1" data-toggle="tooltip" title="Plot by year over a single year period"> 
+  <p class="buttonLegend" style="font-size:10px; margin-top:0; margin-bottom:0; " >Binning | X Axis </p>
+  <button onclick="myFunction('myDropdown1')" class="dropbtn" id="d1"  data-toggle="tooltip" title="Choose the bar chart time lapse">Year</button>
   <div id="myDropdown1" class="dropdown-content">
-    <a href="#Year" onclick="action1()">Year</a>
-    <a href="#Month" onclick="action2()">Month</a>
-    <a href="#SingleYear" onclick="action3()">Single Year</a>
-    <a href="#Country" onclick="countryPlot()">Country Data</a>
+    <a href="#Year" onclick="action1()" data-toggle="tooltip" title="Plot by year over the whole period" >Year</a>
+    <a href="#Month" onclick="action2()" data-toggle="tooltip" title="Plot by month over the whole period" >Month</a>
+    <a href="#SingleYear" onclick="action3()"data-toggle="tooltip" title="Plot by year over a single year period" >Single Year</a>
   </div>
   <div class="filter_container" id="filter_container1">
     <label><input type="range" id="filter_slider"/> </label>
@@ -258,14 +326,14 @@
 <div class="zoom_button_container">
   <p>
     <a href="#" onclick="zoom()" (svgBars) >
-      <i class="fa fa-search-plus"></i>
+      <i id="zoom1" style="color:teal" class="fa fa-search-plus"  data-toggle="tooltip" title="Brush to zoom in"></i>
     </a>
   </p>
 </div>
 <div class="brush_button_container" >
   <p>
     <a  href="#" onclick="brush2Map()" (svgBars) >
-        <i class="fa fa-arrow-left"></i>
+        <i id="brush1" class="fa fa-arrow-left"  data-toggle="tooltip" title="Brush to change the map's time lapse"></i>
     </a>
   </p>
 </div>
@@ -273,20 +341,32 @@
 <div class="undo_button_container" >
   <p>
     <a  href="#" onclick="rollBack1()" (svgBars) >
-        <i class="fa fa-undo"></i>
+        <i class="fa fa-undo" data-toggle="tooltip" title="Undo last action &#013You can also double click the desired panel"></i>
     </a>
   </p>
-</div>
 
+</div>
+<div class="brazil_button_container" >
+    <p>
+      <a  href="#" onclick="brush2Map()" (svgBars) >
+          <i id="brazil1" class="fa fa-globe" onclick="countryPlot()" data-toggle="tooltip" title="Select the whole country"></i>
+      </a>
+    </p>
+  </div>
 
 <div id="div3" onclick="setCurrentDiv3()" ondblclick="rollBack2()"></div>
+<div id="title2">
+    <p class="buttonLegend" style="font-size:10px; margin-top:0; " >Selected Area: </p>
+    <p id="t2" style="line-height: 0;"> Brazil<p>
+  </div>
 <div class="dropdown" id="dropdown2">
-  <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2">Dropdown</button>
+ <p class="buttonLegend" style="font-size:10px; margin-top:0; margin-bottom:0; " >Binning | X Axis </p>
+  <button onclick="myFunction('myDropdown2')" class="dropbtn1" id="d2" data-toggle="tooltip" title="Choose the bar chart time lapse">Month</button>
   <div id="myDropdown2" class="dropdown-content1">
-    <a href="#Year" onclick="action4()">Year</a>
-    <a href="#Month" onclick="action5()">Month</a>
-    <a href="#SingleYear" onclick="action6()">Single Year</a>
-    <a href="#Country" onclick="countryPlot()">Country Data</a>
+    <a href="#Year" onclick="action4()" data-toggle="tooltip" title="Plot by year over the whole period" >Year</a>
+    <a href="#Month" onclick="action5()"  data-toggle="tooltip" title="Plot by month over the whole period" >Month</a>
+    <a href="#SingleYear" onclick="action6()" data-toggle="tooltip" title="Plot by year over a single year period">Single Year</a>
+   
   </div>
 
 
@@ -298,24 +378,32 @@
 <div class="zoom_button_container2">
   <p>
     <a href="#" onclick="zoom2()" (svgBars) >
-      <i class="fa fa-search-plus"></i>
+      <i id="zoom2" style="color:teal" class="fa fa-search-plus"  data-toggle="tooltip" title="Brush to zoom in"></i>
     </a>
   </p>
 </div>
 <div class="brush_button_container2" >
   <p>
     <a  href="#" onclick="brush2Map2()" (svgBars) >
-        <i class="fa fa-arrow-left"></i>
+        <i id="brush2" class="fa fa-arrow-left" data-toggle="tooltip" title="Brush to change the map's time lapse"></i>
     </a>
   </p>
 </div>
 <div class="undo_button_container2" >
   <p>
     <a  href="#" onclick="rollBack2()" (svgBars) >
-        <i class="fa fa-undo"></i>
+        <i class="fa fa-undo" data-toggle="tooltip" title="Undo last action &#013You can also double click the desired panel"></i>
     </a>
   </p>
 </div>
+
+<div class="brazil_button_container2" >
+    <p>
+      <a  href="#" onclick="brush2Map()" (svgBars) >
+          <i id="brazil2" class="fa fa-globe" onclick="countryPlot()" data-toggle="tooltip" title="Select the whole country"></i>
+      </a>
+    </p>
+  </div>
 
 
 <script type="text/javascript">
@@ -348,7 +436,7 @@
     let raw_geo_data;
     let filteredState, filteredState1, filteredState2;
     let ele = document.getElementById('div2');
-    let barheight = parseInt(ele.clientHeight);
+    let barheight = parseInt(ele.clientHeight)-20;
     let barWidth = parseInt(ele.clientWidth) - 50;
     let countryMonthSum, countryYearSum;
 
@@ -384,18 +472,26 @@
         tmpState2;
      let previousName1="Brazil",
          previousName2="Brazil";
+     let previousDropName1="Brazil",
+         previousDropName2="Brazil";
      let previousFlag1=1,
          previousFlag2=2;
      let prevSlider1=0,
         tmpSlider1=0,
         prevSlider2=0;
         tmpSlider2=0;
-    let zoomFlag=0,
-        zoomFlag1=0,
-        zoomFlag2=0; //zoom hasn't happenned
+    let zoomFlag=1,
+        zoomFlag1=1,
+        zoomFlag2=1; //zoom hasn't happenned
     let brushFlag=0,
         brushFlag1=0,
         brushFlag2=0;
+
+  //title
+  let title,
+      title1,
+      title2;
+
     function showFlags(){
       console.log("countryState",countryState,"flag",flag,"flag2",flag2,"flag3",flag3,"zoomFlag",zoomFlag,"brushFlag",brushFlag )
     }

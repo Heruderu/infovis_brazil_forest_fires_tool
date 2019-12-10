@@ -19,13 +19,11 @@ function getMonthSum(data) {
 
                 
            }});
-           console.log(countrySum)
-          // debugger
+        
           countrySum.sort(function(x, y){
             return d3.ascending(x.Order, y.Order);
             })
-            console.log(countrySum)
-            //debugger
+          
             return countrySum;
        
 }
@@ -79,7 +77,7 @@ function getFilteredStatePerYear()
   { 
      dados =getMonthSum(rawData);
     filteredStatePerYear= dados.filter(d=> d.Periodo%10000===+this.value);
-        console.log(+this.value)
+       
     }
     else
     {

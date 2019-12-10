@@ -46,6 +46,7 @@ function slider(str,str1)
 function setCurrentDiv2()
 {
     currentDiv= "#div2";
+    document.getElementById("d0").firstChild.data="Top Panel";
     filteredState=filteredState1;
     svgBars = svgBars1;
     flag=flag2;
@@ -57,6 +58,7 @@ function setCurrentDiv2()
 function setCurrentDiv3()
 {
   currentDiv= "#div3";
+  document.getElementById("d0").firstChild.data="Bottom Panel";
   filteredState=filteredState2;
   svgBars = svgBars2;
   flag=flag3;
@@ -70,6 +72,7 @@ function action1()
 {
   document.getElementById("filter_slider").style.display = 'none';
   d3.select("#label").text("");
+  updateDropName("Year");
   let dados;
   if(countryState1==1)
     dados =rawData;
@@ -91,7 +94,8 @@ function action1()
 function action2()
 {
   document.getElementById("filter_slider").style.display = 'none';
-  d3.select("#label").text("")
+  d3.select("#label").text("");
+  updateDropName("Month");
   barState=1;
   previousFlag1=flag2;
   flag2=2;
@@ -113,7 +117,8 @@ function action2()
 function action3()
 {
   document.getElementById("filter_slider").style.display = 'inline';
-  d3.select("#label").text("")
+  d3.select("#label").text("");
+  updateDropName("Single Year");
     countryState=countryState1;
     let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
@@ -131,7 +136,7 @@ function action4()
 {
   document.getElementById("filter_slider2").style.display = 'none';
   d3.select("#label2").text("")
-
+  updateDropName("Year");
   barState=1;
   previousFlag2=flag3;
   flag3=1;
@@ -154,7 +159,8 @@ function action4()
 function action5()
 {
   document.getElementById("filter_slider2").style.display = 'none';
-  d3.select("#label2").text("")
+  d3.select("#label2").text("");
+  updateDropName("Month");
   barState=1;
   previousFlag2=flag3;
   flag3=2;
@@ -181,7 +187,7 @@ function action6()
 {
   document.getElementById("filter_slider2").style.display = 'inline';
   d3.select("#label2").text("")
-  
+  updateDropName("Single Year");
   countryState=countryState2;
   let filteredStatePerYear=getFilteredStatePerYearInit()
     barState=1;
@@ -208,7 +214,26 @@ function myFunction(str) {
         setCurrentDiv3();
   }
   
+  function myFunction0(str) {
+    document.getElementById(str).classList.toggle("show");
+  }
   // Close the dropdown if the user clicks outside of it
+  window.addEventListener("click", function(event) {
+    if (!event.target.matches('.dropbtn0')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content0");
+      var i;
+      for (i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  });
+
+  
+  
+  
   window.addEventListener("click", function(event) {
     if (!event.target.matches('.dropbtn')) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -329,20 +354,52 @@ function updateSlider(prevSlider){
  function zoom(){
     zoomFlag1=1;
     brushFlag1=0;
+    document.getElementById("zoom1").style.color="teal";
+    document.getElementById("brush1").style.color="";
 
  }
  function zoom2(){
   zoomFlag2=1;
   brushFlag2=0;
 
+  document.getElementById("zoom2").style.color="teal";
+    document.getElementById("brush2").style.color="";
+
 }
  function brush2Map(){
   brushFlag1=1;
   zoomFlag1=0;
+  document.getElementById("zoom1").style.color="";
+  document.getElementById("brush1").style.color="teal";
 
 }
 function brush2Map2(){
   brushFlag2=1;
   zoomFlag2=0;
+  document.getElementById("zoom2").style.color="";
+  document.getElementById("brush2").style.color="teal";
+
+}
+
+function updateDropName(name) {
+    
+  if (currentDiv == "#div2") {
+      previousDropName1=document.getElementById("d1").firstChild.data
+      document.getElementById("d1").firstChild.data = name;
+  } else if (currentDiv == "#div3") {
+      previousName2=document.getElementById("d2").firstChild.data
+      document.getElementById("d2").firstChild.data = name;
+  }
+}
+function saveDropName(){
+
+  if (currentDiv == "#div2") {
+      previousDropName1=document.getElementById("d1").firstChild.data
+      
+  } else if (currentDiv == "#div3") {
+      previousDropName2=document.getElementById("d2").firstChild.data
+      
+  }
+
 
 }

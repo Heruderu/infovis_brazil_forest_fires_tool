@@ -18,24 +18,28 @@
            let  x_axis = d3.axisBottom(xBars);
             svgBars.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + (height-40) + ")")
+                .attr("transform", "translate(0," + (height-20) + ")")
                 .call(x_axis);
             //y axis
              let y_axis = d3.axisLeft(yBars);
             svgBars.append("g")
                     .attr("class", "y axis")
-                    .attr("transform", "translate("+margin+" ,-40)")
+                    .attr("transform", "translate("+margin+" ,-20)")
                     .call(y_axis);
 
            
            //brushGroup=svgBars.join("g")
              //       .attr("class", "brush");
+
            
-            if(str=="#div2")
+            if(str=="#div2"){
                 svgBars1=svgBars;
-            else if(str=="#div3")
+                title1=title;
+            }
+            else if(str=="#div3"){
                 svgBars2=svgBars;
-            
+                title1=title;
+            }
             drawBars(svgBars, barScales, data);
            
            
@@ -54,8 +58,7 @@
             {    
                 previousState1=tmpState1;
                 tmpState1=data;
-                flag2=previousFlag1;
-                console.log("HELLOHELLO")
+            
                 
                 
             }
@@ -63,8 +66,7 @@
             {
                 previousState2=tmpState2;
                 tmpState2=data;
-                flag3=previousFlag2;
-                console.log("ELAELA")
+               
             }   
         }
        function drawBars(svgBars, scales, data){
@@ -78,22 +80,17 @@
         let brush=d3.brush().on("end",brushed);
 
       
-       /* if(brushGroup!=null) 
-        {
-            console.log("wtf")
-            svgBars.call(brush.move, null);
-        }
-*/
+      
        svgBars.selectAll("*").remove();
        
        
-       //d3.selectAll("g.brush").call(brush.clear());
+
            
        let  x_axis = d3.axisBottom(xBars)
                     .tickSizeOuter(0);
        svgBars.append("g")
            .attr("class", "x axis")
-           .attr("transform", "translate(0," + (height-40) + ")")
+           .attr("transform", "translate(0," + (height-20) + ")")
            .call(x_axis)
            .selectAll("text")
                     .attr("transform", "rotate(65)");
@@ -101,7 +98,7 @@
         let y_axis = d3.axisLeft(yBars);
        svgBars.append("g")
                .attr("class", "y axis")
-               .attr("transform", "translate("+margin+" ,-40)")
+               .attr("transform", "translate("+margin+" ,-20)")
                .call(y_axis); 
 
 
@@ -112,7 +109,7 @@
             .data(data)
                 .join("rect")
                     .attr("x",function(d,i){return xBars(i)})
-                    .attr("y", height-40)
+                    .attr("y", height-20)
                     .attr("width", (width - margin)/data.length)
                     .attr("height", 0)
                     .style("fill", "#fed976")
@@ -130,7 +127,7 @@
             .transition()
                 .duration(400)
                 .ease(d3.easeLinear)
-                .attr("y", function(d){return yBars(d.Número)-40;})
+                .attr("y", function(d){return yBars(d.Número)-20;})
                 .attr("height", d =>height- yBars(d.Número));
      
         //Draw axis skeleton
@@ -166,17 +163,14 @@
                     .attr("class", "brush")
                     .call(brush);
             if(svgBars===svgBars1){
-             console.log("HEYA")
                 brushGroup1=brushGroup;
 
             }else if(svgBars===svgBars2){
-                console.log("HEYO")
                 brushGroup2=brushGroup;
             }
 
 
         function brushed() {
-            // console.log( d3.event.selection );
             if (!d3.event.sourceEvent) return;
                 
             if(svgBars===svgBars1)
@@ -194,20 +188,15 @@
                 
                // debugger
                 let selY=[yBars.invert(sel[0][1]),yBars.invert(sel[1][1])]
-                console.log("sssss")
                 
                 //filter data
                 zoomed= data.filter((d,i)=> i>=selX[0] && i<=selX[1] )
                 let filteredMapData=rawData.filter((d,i)=> d.Order>=selT[0] && d.Order<=selT[1] )
-                console.log("caralho21")
-                console.log(selT[0],selT[1],filteredMapData,rawData)
 
 
-                console.log(zoomed)
                 //attempt to destroy the brush... and fail miserably
                 svgBars.selectAll("g.brush").remove();    
                 brushGroup.call(brush.move, null);
-                //brushGroup.remove();
 
 
 
@@ -227,9 +216,6 @@
                             })
                             .entries(filteredMapData);
                         
-                            console.log("caralho2")
-                            console.log(nested)
-                
                     fillStates(nested);
                 }else if(zoomFlag==1)
                 {
@@ -243,11 +229,7 @@
         }    
 
 
-        
-
-
-
-
+    
         function updateBars(svgBars, scales, data){
             let height=barheight;
             let width =barWidth;
@@ -274,7 +256,7 @@
                        // .delay(400)
                         .duration(400)
                         .ease(d3.easeLinear)
-                        .attr("y", function(d){return yBars(d.Número)-40;})
+                        .attr("y", function(d){return yBars(d.Número)-20;})
                         .attr("height", d =>height- yBars(d.Número));
                 
         }
@@ -327,7 +309,6 @@
                 console.log(yearMin,yearMax);
                 domain=[+ new Date(yearMin,0,0),+ new Date(yearMax,0,12)]
             }
-                //let domain=[+ new Date(1998,0,0),+ new Date(2017,0,12)]
             let xTime = d3.scaleTime()
                 .rangeRound([margin+sms, width+sms])
                 
@@ -346,6 +327,5 @@
             yBars = d3.scaleLinear()
                     .range([margin,height ])
                     .domain(Ydomain);
-                    //console.log(d3.max(data, d=>+d.Número))
             return yBars;   
         }
