@@ -15,6 +15,9 @@ let projection = d3.geoMercator()
 
 let path = d3.geoPath().projection(projection);
 
+let states;
+let states_contour;
+
 function loadMap(brazilstates) {
     firesPerState = d3.map();
     if (loadFullData != 1) {
@@ -31,6 +34,8 @@ function loadMap(brazilstates) {
         .attr('class', 'map');
 
     jsonFile = brazilstates;
+    states = topojson.feature(jsonFile, jsonFile.objects.foo);
+    states_contour = topojson.mesh(jsonFile, jsonFile.objects.foo.geometries);
 
     d3.csv("new_csv.csv")
         .then((data) => {
@@ -103,6 +108,17 @@ function loadMap(brazilstates) {
             console.log(err)
         });
 
+    svg.append("g")
+        .append("path")
+        .datum(states_contour)
+        .attr("d", path)
+        .attr("class", "state_contour");
+
+    svg.append('text')
+        .attr('font-size', 20)
+        .attr('x', margin )
+        .attr('y', 30)
+        .text("VI: Trabalho de Design - Queimadas no Brasil") 
 
 }
 
@@ -124,48 +140,31 @@ function fillStates(nested) {
 
     console.log(nested);
 
-    let states = topojson.feature(jsonFile, jsonFile.objects.foo);
-    let states_contour = topojson.mesh(jsonFile, jsonFile.objects.foo.geometries);
-
     let color = d3.scaleQuantize()
         .domain(numero_extent)
         .range(d3.schemeReds[9]);
 
     let total = 0;
-    svg.append("g")
-        .selectAll("path")
+    svg.selectAll("path")
         .data(states.features)
-        .enter()
-            .append("path")
-            .attr("class", "state")
-            .attr("stroke", "gray")
-            .attr("fill", function (d) {
-                nested.forEach(function (n) {
-                    if (n.key != "undefined") {
-                        if (n.values) {
-                            let data_array = n.values;
-                            total = data_array.forEach(function (n) {
-                                firesPerState.set(n.key, n.value);
-                                if (n.key === d.properties.codarea) {
-                                    total = n.value;
-                                }
-                                return color(total);
-                            })
-                        }
+            .join("path")
+                .attr("class", "state")
+                .attr("stroke", "gray")
+                .attr("fill", function (d) {
+                    nested.forEach(function (n) {
                         firesPerState.set(n.key, n.value);
                         if (n.key === d.properties.codarea) {
                             total = n.value;
                         }
-                    }
+                    })
+                    return color(total);
                 })
-                return color(total);
-            })
-            .attr("d", path)
-            .on("mouseover", handleMouseOver)
-            .on("mouseout", handleMouseOut)
-            .on("click", function (d) {
-                getSingleStateData(d.properties.codarea);
-            });
+                .attr("d", path)
+                .on("mouseover", handleMouseOver)
+                .on("mouseout", handleMouseOut)
+                .on("click", function (d) {
+                    getSingleStateData(d.properties.codarea);
+                });
 
     function handleMouseOver(d, i) {
         let format = d3.format(",");
@@ -188,18 +187,6 @@ function fillStates(nested) {
         d3.select(this).attr("stroke", "gray");
         d3.select(this).attr("stroke-width", 1);
     }
-
-    svg.append("g")
-        .append("path")
-        .datum(states_contour)
-        .attr("d", path)
-        .attr("class", "state_contour");
-
-    svg.append('text')
-        .attr('font-size', 20)
-        .attr('x', margin )
-        .attr('y', 30)
-        .text("VI: Trabalho de Design - Queimadas no Brasil")
 
     createLegends(numero_extent, color);
 
@@ -264,29 +251,17 @@ function updateMapSlider(str, str1) {
     let label = d3.select(str1);
     let min = 1999;
     let max = 2016;
-    let dados = d3.csv("new_csv.csv")
-        .then((data) => {
-            let newdata = data.map(d => {
-                d["Número"] = +d["Número"];
-                d["Estado"] = d["Estado"];
-                d["Periodo"] = +d["Periodo"];
-                d["Ano"] = +d["Ano"]
-                return d;
-            });
-            slider
-                .attr("min", min)
-                .attr("max", max)
-                .attr("value", 1)
-                .attr("step", 1)
-                .on("input", function input() {
-                    getMapByYear(newdata, label, this.value)
-                });
-        })
-
+    slider
+        .attr("min", min)
+        .attr("max", max)
+        .attr("value", 1)
+        .attr("step", 1)
+        .on("input", function input() {
+            getMapByYear(rawData, label, this.value)
+        });
 }
 
 function getMapByYear(data, label, year) {
-    console.log(document.getElementById("reset").attributes);
     document.getElementById("reset").disabled = false;
     firesPerState = d3.map();
     label.text(year);
