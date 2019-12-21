@@ -1,3 +1,4 @@
+//Description: Implement the slider in its corresponding container
 function slider(str,str1)
 {
     let slider = d3.select(str);
@@ -11,7 +12,7 @@ function slider(str,str1)
                .attr("step", 1)
                .on("input", function(d) {
 
-                
+                  //Save previous state
                   if(str=="#filter_slider"){
                       setCurrentDiv2();
                       prevSlider1=tmpSlider1;
@@ -23,10 +24,11 @@ function slider(str,str1)
                       tmpSlider2=this.value;
                   }
 
-                   label.text(this.value); // use `this` on the place of slider
-                   //console.log(this.value)
+
+                   label.text(this.value);                  
                    let filteredStatePerYear;
                   let dados;
+                  //Decide the type of filtering depending its for the whole country or for a single state
                    if(countryState==1)
                    { 
                       dados =getMonthSum(rawData);
@@ -39,10 +41,11 @@ function slider(str,str1)
                       filteredStatePerYear= dados.filter(d=> d.Ano===+this.value);
                      }
                   
-                        barState=1;
+                        barState=1; //redraw
                        updateBars(svgBars, barScales, filteredStatePerYear);
                })        
 }
+//Description: Set state variables to those of Div2
 function setCurrentDiv2()
 {
     currentDiv= "#div2";
@@ -55,6 +58,7 @@ function setCurrentDiv2()
     zoomFlag=zoomFlag1;
     brushGroup=brushGroup1;
 }
+//Description: Set state variables to those of Div3
 function setCurrentDiv3()
 {
   currentDiv= "#div3";
@@ -68,6 +72,9 @@ function setCurrentDiv3()
   brushGroup=brushGroup2;
 }
 
+/*Description for all actions: Redraw or update a new bar chart with a new x axis. 
+Action 1-3 ->div2
+Action 4-6 ->div3   */
 function action1()
 {
   document.getElementById("filter_slider").style.display = 'none';
@@ -214,11 +221,15 @@ function myFunction(str) {
         setCurrentDiv3();
   }
   
-  function myFunction0(str) {
+function myFunction0(str) {
     document.getElementById(str).classList.toggle("show");
   }
-  // Close the dropdown if the user clicks outside of it
-  window.addEventListener("click", function(event) {
+
+  /*Description: Close dropddown menus when clickng elsewhere  
+  Code taken from:
+  https://www.w3schools.com/howto/howto_js_dropdown.asp
+  */
+window.addEventListener("click", function(event) {
     if (!event.target.matches('.dropbtn0')) {
       var dropdowns = document.getElementsByClassName("dropdown-content0");
       var i;
@@ -231,10 +242,7 @@ function myFunction(str) {
     }
   });
 
-  
-  
-  
-  window.addEventListener("click", function(event) {
+window.addEventListener("click", function(event) {
     if (!event.target.matches('.dropbtn')) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
       var i;
@@ -246,10 +254,6 @@ function myFunction(str) {
       }
     }
   });
-
-  
-
-
 window.addEventListener("click", function(event) {
 
     if (!event.target.matches('.dropbtn1') ) {
@@ -263,11 +267,14 @@ window.addEventListener("click", function(event) {
       }
     }
   });
-  window.addEventListener("click", function(event) {
+window.addEventListener("click", function(event) {
     if (event.target.matches("#div1") )
         countryPlot();
   });
-  function countryPlot()
+
+
+ /*Decription: Fill graphs with data from the whole country*/ 
+function countryPlot()
             {
                 countryState=updateCountryState(1);
                 updateName("Brazil");
@@ -277,7 +284,7 @@ window.addEventListener("click", function(event) {
                   action4()   
 
             }
-
+ /*Decription: Update flag identifying counttry or state data depending on te current div*/ 
 function updateCountryState(newState)
 {
     if (currentDiv=="#div2")
@@ -293,6 +300,7 @@ function updateCountryState(newState)
     }   
 }
 
+/*Description: Update and save ploted data */
 function updateStates(state)
 {
      if (currentDiv=="#div2")
@@ -305,6 +313,7 @@ function updateStates(state)
      filteredState2=state;
      }   
  }
+/*Description: Update and save displayed region */ 
  function updateName(name)
 {
      if (currentDiv=="#div2")
@@ -316,6 +325,7 @@ function updateStates(state)
          document.getElementById("d2").firstChild.data=name;
      }   
  }
+ /*Description: Update and save slider value.(only used in the rollback button) */
 function updateSlider(prevSlider){
   if (currentDiv=="#div2")
   {   
@@ -332,13 +342,14 @@ function updateSlider(prevSlider){
   }   
 
 }
+/*Description: Reset all visualizations */
  function reset(jsonFile) {
   document.getElementById("reset").disabled = true;
   document.getElementById("filter_slider_map").value = 0;
   let mapLoaded = d3.json(jsonFile);
   mapLoaded.then(loadMap);
  }
-
+/*Description:Rollback button callback for each div*/
  function rollBack1(){
   barState=1;
   updateName(previousName1);
@@ -351,6 +362,7 @@ function updateSlider(prevSlider){
   updateSlider(prevSlider2)
   updateBars(svgBars2, [], previousState2);
  }
+/*Description:Enable zoom flag and disable brush flag*/
  function zoom(){
     zoomFlag1=1;
     brushFlag1=0;
@@ -358,6 +370,7 @@ function updateSlider(prevSlider){
     document.getElementById("brush1").style.color="";
 
  }
+ /*Description:Enable zoom flag and disable brush flag*/
  function zoom2(){
   zoomFlag2=1;
   brushFlag2=0;
@@ -366,6 +379,7 @@ function updateSlider(prevSlider){
     document.getElementById("brush2").style.color="";
 
 }
+/*Description:Enable zoom brush and disable zoom flag*/
  function brush2Map(){
   brushFlag1=1;
   zoomFlag1=0;
@@ -373,6 +387,8 @@ function updateSlider(prevSlider){
   document.getElementById("brush1").style.color="teal";
 
 }
+/*Description:Enable zoom brush and disable zoom flag*/
+
 function brush2Map2(){
   brushFlag2=1;
   zoomFlag2=0;
@@ -380,7 +396,7 @@ function brush2Map2(){
   document.getElementById("brush2").style.color="teal";
 
 }
-
+/*Description:Save and update dropdwn state */
 function updateDropName(name) {
     
   if (currentDiv == "#div2") {
@@ -391,6 +407,7 @@ function updateDropName(name) {
       document.getElementById("d2").firstChild.data = name;
   }
 }
+/*Description:Only save dropdwn state */
 function saveDropName(){
 
   if (currentDiv == "#div2") {

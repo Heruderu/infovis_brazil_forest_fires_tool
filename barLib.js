@@ -1,4 +1,5 @@
 
+/*Description: Initializa all global variables including svgs*/
         function setupVis(data,str){
             let height=barheight;
             let width =barWidth;
@@ -26,11 +27,6 @@
                     .attr("class", "y axis")
                     .attr("transform", "translate("+margin+" ,-20)")
                     .call(y_axis);
-
-           
-           //brushGroup=svgBars.join("g")
-             //       .attr("class", "brush");
-
            
             if(str=="#div2"){
                 svgBars1=svgBars;
@@ -49,18 +45,14 @@
            
 
         }
+/*Description: Save and update state variables need for the rollback button*/
         function updateMemory(data)
         {
-           
-                
-
             if (currentDiv=="#div2")
             {    
                 previousState1=tmpState1;
                 tmpState1=data;
-            
-                
-                
+                   
             }
             else if(currentDiv=="#div3")
             {
@@ -69,6 +61,8 @@
                
             }   
         }
+
+/*Description: Draw bar chart from scratch*/
        function drawBars(svgBars, scales, data){
          let height=barheight;
          let width =barWidth;
@@ -80,12 +74,12 @@
         let brush=d3.brush().on("end",brushed);
 
       
-      
+      //Clear previous
        svgBars.selectAll("*").remove();
        
        
 
-           
+       //Redraw axis    
        let  x_axis = d3.axisBottom(xBars)
                     .tickSizeOuter(0);
        svgBars.append("g")
@@ -136,14 +130,13 @@
             .transition()
             .call(y_axis);
 
-       //  if(flag==3)   
-         //   xTime= computeMonthScale(data);
-         //else
-            xTime= computeTimeScale_G(data);
+       
+        xTime= computeTimeScale_G(data);
                  
         x_axis = d3.axisBottom(xTime)
         
-        if(flag==1)
+        //flag correponds to the dropdown menu position, the x axis
+        if(flag==1) 
             x_axis.tickFormat(d3.timeFormat("%Y"));
         else if(flag==2)
             x_axis.tickFormat(d3.timeFormat("%Y-%b"));
@@ -158,7 +151,7 @@
 
 
          
-        
+        //Initialize brush
         brushGroup=svgBars.join("g")
                     .attr("class", "brush")
                     .call(brush);
@@ -170,6 +163,7 @@
             }
 
 
+        //Brush function
         function brushed() {
             if (!d3.event.sourceEvent) return;
                 
@@ -185,8 +179,6 @@
                
                 //convert position to date and the to order "YYYYMM"
                 selT=[xTime.invert(sel[0][0]).getFullYear()*100+xTime.invert(sel[0][0]).getMonth(),xTime.invert(sel[1][0]).getFullYear()*100+xTime.invert(sel[1][0]).getMonth()];
-                
-               // debugger
                 let selY=[yBars.invert(sel[0][1]),yBars.invert(sel[1][1])]
                 
                 //filter data
@@ -194,15 +186,17 @@
                 let filteredMapData=rawData.filter((d,i)=> d.Order>=selT[0] && d.Order<=selT[1] )
 
 
-                //attempt to destroy the brush... and fail miserably
+                //destroy the brush
                 svgBars.selectAll("g.brush").remove();    
                 brushGroup.call(brush.move, null);
 
 
 
-                    
+                  
+                //Perform the action corresponding to the mode selected: zoom/brush2map 
                 if(brushFlag==1)
                 {
+                    //nesting is needed due to imcompatibilite with the map lib
                     let nested = d3.nest()
                             .key(function (d) {
                                 return d["Estado"];
@@ -215,7 +209,8 @@
                                 return +total;
                             })
                             .entries(filteredMapData);
-                        
+                     
+                    //        
                     fillStates(nested);
                 }else if(zoomFlag==1)
                 {
@@ -229,7 +224,7 @@
         }    
 
 
-    
+/*Description: Update the bar chart without redrawing it, may retrun the drawBars function, if a redraw is requested */
         function updateBars(svgBars, scales, data){
             let height=barheight;
             let width =barWidth;
@@ -260,6 +255,7 @@
                         .attr("height", d =>height- yBars(d.Número));
                 
         }
+/*Description:Compute x scale related to array length */ 
         function computeXScale(data){
             let width =barWidth-margin;
             let xBars = d3.scaleLinear()
@@ -269,7 +265,7 @@
             
         }   
 
-      
+ /*Description:Compute fixed year scale */     
         function computeTimeScale(data){
             let width =barWidth-margin;
             let xTime = d3.scaleLinear()
@@ -279,6 +275,7 @@
             return xTime;  
             
         }   
+ /*Description:COmpute fixed month scale */       
         function computeMonthScale(data){
             let width =barWidth-margin;
             let sms= width/24;
@@ -288,7 +285,7 @@
             return xTime;  
             
         }   
-        
+/*Description:Compute dynamic scale by first searcing for its bounds*/
         function computeTimeScale_G(data){
             
             let width =barWidth-margin;
@@ -316,7 +313,7 @@
 
             return xTime;
         }
-        
+/*Description:Compute dynamic  y scale by first searcing for its bounds*/
         function computeYScale(data){
             let width = barWidth;
             let height = barheight;
