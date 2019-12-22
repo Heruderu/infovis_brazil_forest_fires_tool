@@ -22,4 +22,12 @@ This project is meant to show the students skills on developing an Information V
 
 * You can watch a video about the usage of this tool in: https://youtu.be/4VTSQTzNNx8
 
+* You can check the project in the github repository: https://github.com/Heruderu/infovis_brazil_forest_fires_tool
+
 * You can also read more in the report included in this repository.
+
+* You need Python to run this application. It will be available on localhost (for example, port 8000). For Python 2 and Python 3, you can use:
+
+        python2 -m SimpleHTTPServer 8000
+        
+        python3 -m http.server 8000
