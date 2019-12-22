@@ -18,7 +18,7 @@ This project is meant to show the students skills on developing an Information V
 
 
 
-This project was made with d3.js for manipulating the content, and SVGs to display information.
+**This project was made with d3.js for manipulating the content, and SVGs to display information.**
 
 * You can watch a video about the usage of this tool in: https://youtu.be/4VTSQTzNNx8
 
